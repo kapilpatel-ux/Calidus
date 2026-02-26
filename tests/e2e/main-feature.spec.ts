@@ -69,9 +69,13 @@ test.describe('Search & Browse Features', () => {
   test('category page has filter controls', async ({ page }) => {
     await page.goto('/category/armored-systems', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('category-page')).toBeVisible();
-    // Filters sidebar
+    // Filters sidebar is always visible
     await expect(page.getByTestId('filters-sidebar')).toBeVisible();
+    // Apply a rating filter to trigger the clear button (it's conditional on activeFilterCount > 0)
+    await page.getByTestId('filter-rating-4').click({ force: true });
     await expect(page.getByTestId('clear-filters-btn')).toBeVisible();
+    // Verify the sort dropdown is also present
+    await expect(page.getByTestId('sort-select')).toBeVisible();
   });
 
   test('category page shows products list', async ({ page }) => {
