@@ -39,8 +39,10 @@ test.describe('Product & Supplier Detail Pages', () => {
   test('product page specifications section visible', async ({ page }) => {
     await page.goto('/product/rocket-launcher-m270-mlrs', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('product-page')).toBeVisible();
-    // Should show TECHNICAL SPECIFICATIONS heading
-    await expect(page.getByRole('heading', { name: 'TECHNICAL SPECIFICATIONS' })).toBeVisible();
+    // Specs are in the "Technical Specs" tab - click it first
+    await page.getByRole('tab', { name: 'Technical Specs' }).click();
+    await expect(page.getByTestId('product-specs')).toBeVisible();
+    await expect(page.getByTestId('product-specs')).toContainText('TECHNICAL SPECIFICATIONS');
   });
 
   test('supplier page loads with info', async ({ page }) => {
