@@ -36,7 +36,15 @@ test.describe('Product & Supplier Detail Pages', () => {
     await expect(page.getByRole('heading', { name: 'Contact Supplier' })).toBeVisible();
   });
 
-  test('product page specifications section visible', async ({ page }) => {
+  test('product page has tabs: Overview, Technical Specs, Applications', async ({ page }) => {
+    await page.goto('/product/rocket-launcher-m270-mlrs', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('product-page')).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Overview' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Technical Specs' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Applications' })).toBeVisible();
+  });
+
+  test('product page specifications section visible in Technical Specs tab', async ({ page }) => {
     await page.goto('/product/rocket-launcher-m270-mlrs', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('product-page')).toBeVisible();
     // Specs are in the "Technical Specs" tab - click it first
@@ -45,11 +53,36 @@ test.describe('Product & Supplier Detail Pages', () => {
     await expect(page.getByTestId('product-specs')).toContainText('TECHNICAL SPECIFICATIONS');
   });
 
-  test('supplier page loads with info', async ({ page }) => {
+  test('product page Applications tab shows content', async ({ page }) => {
+    await page.goto('/product/rocket-launcher-m270-mlrs', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('product-page')).toBeVisible();
+    await page.getByRole('tab', { name: 'Applications' }).click();
+    await expect(page.locator('body')).toContainText(/APPLICATION AREAS/i);
+  });
+
+  test('product page has supplier snapshot section', async ({ page }) => {
+    await page.goto('/product/rocket-launcher-m270-mlrs', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('product-page')).toBeVisible();
+    await expect(page.locator('body')).toContainText(/SUPPLIER SNAPSHOT/i);
+    await expect(page.getByTestId('view-supplier-profile-btn')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('supplier page loads with trust indicators', async ({ page }) => {
     await page.goto('/supplier/sentinel-defense-systems', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('supplier-page')).toBeVisible();
     await expect(page.getByTestId('supplier-title')).toBeVisible();
     await expect(page.getByTestId('supplier-title')).toContainText('SENTINEL');
+    // Trust indicators: years of experience, active products, countries served
+    await expect(page.locator('body')).toContainText(/Years Experience|years/i);
+    await expect(page.locator('body')).toContainText(/Active Products|Countries Served/i);
+  });
+
+  test('supplier page has profile completeness meter', async ({ page }) => {
+    await page.goto('/supplier/sentinel-defense-systems', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('supplier-page')).toBeVisible();
+    // Profile completeness section
+    await expect(page.locator('body')).toContainText(/Profile Completeness/i);
+    await expect(page.locator('body')).toContainText(/Profile Score/i);
   });
 
   test('supplier page has contact button', async ({ page }) => {
@@ -70,6 +103,54 @@ test.describe('Product & Supplier Detail Pages', () => {
     // Page should load with supplier cards
     const supplierLinks = page.locator('a[href*="/supplier/"]');
     await expect(supplierLinks.first()).toBeVisible({ timeout: 15000 });
+  });
+});
+
+test.describe('Enhanced Search & Category Features', () => {
+  test.beforeEach(async ({ page }) => {
+    await dismissToasts(page);
+    await removeEmergentBadge(page);
+  });
+
+  test('search empty state shows "No Direct Match Found" with expert CTA', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const navSearch = page.getByTestId('navbar').getByTestId('search-input');
+    // Search for something very unlikely to match
+    await navSearch.fill('xyzquantumdefense9999abcnomatch');
+    await expect(page.getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('body')).toContainText(/No Direct Match Found/i);
+    // Expert CTA link
+    await expect(page.getByText(/Speak to Our Experts/i)).toBeVisible();
+  });
+
+  test('category page enhanced filters: subcategory and availability', async ({ page }) => {
+    await page.goto('/category/electronics', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('category-page')).toBeVisible();
+    await expect(page.getByTestId('filters-sidebar')).toBeVisible();
+    // Availability filter exists
+    await expect(page.getByTestId('filter-in-stock')).toBeVisible();
+    // Rating filter exists
+    await expect(page.getByTestId('filter-rating-4')).toBeVisible();
+  });
+
+  test('category page filter: apply rating and clear', async ({ page }) => {
+    await page.goto('/category/electronics', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('category-page')).toBeVisible();
+    // Apply filter
+    await page.getByTestId('filter-rating-4').click({ force: true });
+    // Clear button appears
+    await expect(page.getByTestId('clear-filters-btn')).toBeVisible();
+    // Click clear
+    await page.getByTestId('clear-filters-btn').click({ force: true });
+    // Clear button disappears (no active filters)
+    await expect(page.getByTestId('clear-filters-btn')).not.toBeVisible();
+  });
+
+  test('category page shows product count and sort control', async ({ page }) => {
+    await page.goto('/category/armored-systems', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('category-page')).toBeVisible();
+    await expect(page.getByTestId('sort-select')).toBeVisible();
+    await expect(page.locator('body')).toContainText(/products found/i);
   });
 });
 
