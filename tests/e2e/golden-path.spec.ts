@@ -54,9 +54,10 @@ test.describe('Golden Path - Defense Connect End-to-End Journey', () => {
     const navSearch = page.getByTestId('navbar').getByTestId('search-input');
     await navSearch.fill('armor');
     
-    // 2. Suggestions appear
+    // 2. Suggestions appear (categorized by product/supplier/category)
     await expect(page.getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId('suggestion-0')).toBeVisible();
+    const firstSuggestion = page.locator('[data-testid^="suggestion-"]').first();
+    await expect(firstSuggestion).toBeVisible();
 
     // 3. Submit search
     await navSearch.press('Enter');
