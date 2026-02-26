@@ -300,3 +300,103 @@ class TestInquiry:
         data = r.json()
         assert "id" in data
         assert "message" in data
+
+
+
+class TestFilterOptions:
+    def test_get_filter_options(self, api_client):
+        r = api_client.get(f"{BASE_URL}/api/filter-options")
+        assert r.status_code == 200
+        data = r.json()
+        assert "countries" in data
+        assert "certifications" in data
+        assert isinstance(data["countries"], list)
+        assert isinstance(data["certifications"], list)
+        assert len(data["countries"]) > 0
+        assert len(data["certifications"]) > 0
+
+    def test_filter_options_countries_values(self, api_client):
+        r = api_client.get(f"{BASE_URL}/api/filter-options")
+        data = r.json()
+        # Countries should be strings
+        for country in data["countries"]:
+            assert isinstance(country, str)
+
+    def test_filter_options_certifications_values(self, api_client):
+        r = api_client.get(f"{BASE_URL}/api/filter-options")
+        data = r.json()
+        # Certifications should be strings
+        for cert in data["certifications"]:
+            assert isinstance(cert, str)
+
+
+class TestRelatedProducts:
+    def test_get_related_products(self, api_client):
+        # Get first product slug
+        r = api_client.get(f"{BASE_URL}/api/products")
+        slug = r.json()[0]["slug"]
+        r2 = api_client.get(f"{BASE_URL}/api/products/{slug}/related")
+        assert r2.status_code == 200
+        data = r2.json()
+        assert isinstance(data, list)
+
+    def test_related_products_fields(self, api_client):
+        r = api_client.get(f"{BASE_URL}/api/products")
+        slug = r.json()[0]["slug"]
+        r2 = api_client.get(f"{BASE_URL}/api/products/{slug}/related")
+        data = r2.json()
+        if len(data) > 0:
+            product = data[0]
+            assert "id" in product
+            assert "name" in product
+            assert "slug" in product
+
+    def test_related_products_not_include_self(self, api_client):
+        r = api_client.get(f"{BASE_URL}/api/products")
+        products = r.json()
+        slug = products[0]["slug"]
+        product_id = products[0]["id"]
+        r2 = api_client.get(f"{BASE_URL}/api/products/{slug}/related")
+        data = r2.json()
+        related_ids = [p["id"] for p in data]
+        assert product_id not in related_ids
+
+
+class TestEnhancedSupplierFields:
+    def test_supplier_enhanced_fields(self, api_client):
+        r = api_client.get(f"{BASE_URL}/api/suppliers/sentinel-defense-systems")
+        assert r.status_code == 200
+        data = r.json()
+        # Enhanced fields from new seeding
+        assert "years_in_operation" in data
+        assert "supplier_type" in data
+        assert "profile_completeness" in data
+
+    def test_supplier_profile_completeness_range(self, api_client):
+        r = api_client.get(f"{BASE_URL}/api/suppliers/sentinel-defense-systems")
+        data = r.json()
+        completeness = data.get("profile_completeness", 0)
+        assert 0 <= completeness <= 100
+
+
+class TestEnhancedProductFields:
+    def test_product_enhanced_fields(self, api_client):
+        r = api_client.get(f"{BASE_URL}/api/products/rocket-launcher-m270-mlrs")
+        assert r.status_code == 200
+        data = r.json()
+        # Enhanced product fields
+        assert "lead_time" in data
+        assert "application_areas" in data
+        assert "subcategory" in data
+
+    def test_search_suggestions_categorized(self, api_client):
+        r = api_client.get(f"{BASE_URL}/api/search/suggestions?q=armor")
+        assert r.status_code == 200
+        data = r.json()
+        suggestions = data["suggestions"]
+        assert len(suggestions) > 0
+        types = [s["type"] for s in suggestions]
+        # Should have categorized types
+        valid_types = {"product", "supplier", "category"}
+        for t in types:
+            assert t in valid_types
