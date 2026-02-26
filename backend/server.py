@@ -629,132 +629,228 @@ async def seed_database():
     if existing > 0:
         return {"message": "Database already seeded"}
     
-    # Categories
+    # Categories with enhanced data
     categories = [
         {
             "id": str(uuid.uuid4()),
             "name": "Electronics",
             "slug": "electronics",
-            "description": "Mission-critical electronic components, circuit boards, and integrated systems for defense applications.",
+            "description": "Mission-critical electronic components, circuit boards, and integrated systems for defense applications. Includes ruggedized computing, signal processing, and embedded systems.",
             "image_url": "https://images.pexels.com/photos/163170/board-printed-circuit-board-computer-electronics-163170.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "active_suppliers": 15,
-            "product_count": 89
+            "product_count": 89,
+            "subcategories": ["Circuit Boards", "Embedded Systems", "Signal Processing", "Power Management", "Connectors"],
+            "featured_suppliers": [],
+            "trending": True
         },
         {
             "id": str(uuid.uuid4()),
             "name": "Armored Systems",
             "slug": "armored-systems",
-            "description": "Armored vehicles, protective systems, and ballistic solutions for ground operations.",
+            "description": "Armored vehicles, protective systems, and ballistic solutions for ground operations. Comprehensive protection from small arms to heavy ordnance.",
             "image_url": "https://images.pexels.com/photos/12112278/pexels-photo-12112278.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "active_suppliers": 12,
-            "product_count": 56
+            "product_count": 56,
+            "subcategories": ["Vehicle Armor", "Body Armor", "Blast Protection", "Reactive Armor", "Composite Materials"],
+            "featured_suppliers": [],
+            "trending": False
         },
         {
             "id": str(uuid.uuid4()),
             "name": "Weapons & Munitions",
             "slug": "weapons-munitions",
-            "description": "Precision weapons systems, ammunition, and ordnance for tactical deployment.",
+            "description": "Precision weapons systems, ammunition, and ordnance for tactical deployment. From small arms to artillery systems with NATO-standard compatibility.",
             "image_url": "https://images.unsplash.com/photo-1771889928359-175bfe7f5ec7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHxtaWxpdGFyeSUyMHJvY2tldCUyMGxhdW5jaGVyfGVufDB8fHx8MTc3MjA3OTU4NXww&ixlib=rb-4.1.0&q=85",
             "active_suppliers": 8,
-            "product_count": 43
+            "product_count": 43,
+            "subcategories": ["Rocket Systems", "Artillery", "Small Arms", "Ammunition", "Guided Munitions"],
+            "featured_suppliers": [],
+            "trending": True
         },
         {
             "id": str(uuid.uuid4()),
             "name": "UAV & Aerospace",
             "slug": "uav-aerospace",
-            "description": "High-performance propulsion, avionics, and composite systems engineered for airborne platforms.",
+            "description": "High-performance propulsion, avionics, and composite systems engineered for airborne platforms. Supporting tactical drones to advanced aircraft.",
             "image_url": "https://images.pexels.com/photos/17854251/pexels-photo-17854251.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "active_suppliers": 18,
-            "product_count": 72
+            "product_count": 72,
+            "subcategories": ["Propulsion", "Avionics", "Airframes", "Flight Control", "Navigation Systems"],
+            "featured_suppliers": [],
+            "trending": True
         },
         {
             "id": str(uuid.uuid4()),
             "name": "Communications",
             "slug": "communications",
-            "description": "Secure communication systems, encrypted radios, and tactical networking solutions.",
+            "description": "Secure communication systems, encrypted radios, and tactical networking solutions. Military-grade encryption with battlefield reliability.",
             "image_url": "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "active_suppliers": 14,
-            "product_count": 67
+            "product_count": 67,
+            "subcategories": ["Tactical Radios", "Satellite Systems", "Network Equipment", "Encryption", "Antenna Systems"],
+            "featured_suppliers": [],
+            "trending": False
         },
         {
             "id": str(uuid.uuid4()),
             "name": "Surveillance & Optics",
             "slug": "surveillance-optics",
-            "description": "Advanced surveillance equipment, thermal imaging, and precision optics systems.",
+            "description": "Advanced surveillance equipment, thermal imaging, and precision optics systems. Day/night capability for reconnaissance and targeting.",
             "image_url": "https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "active_suppliers": 11,
-            "product_count": 58
+            "product_count": 58,
+            "subcategories": ["Thermal Imaging", "Night Vision", "Targeting Systems", "Cameras", "Rangefinders"],
+            "featured_suppliers": [],
+            "trending": False
         }
     ]
     
-    # Suppliers
+    # Suppliers with enhanced data
     suppliers = [
         {
             "id": str(uuid.uuid4()),
             "name": "Sentinel Defense Systems",
             "slug": "sentinel-defense-systems",
             "tagline": "Precision Engineering for Critical Missions",
-            "description": "Sentinel Defense Systems is a leading manufacturer of armored vehicle components and ballistic protection systems with over 30 years of experience serving defense forces worldwide.",
+            "description": "Sentinel Defense Systems is a leading manufacturer of armored vehicle components and ballistic protection systems with over 30 years of experience serving defense forces worldwide. Our engineering teams have delivered protection solutions to over 50 nations, with a track record of zero field failures.",
             "logo_url": "https://images.unsplash.com/photo-1738162837627-5794e6563cac?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwY25jJTIwbWFjaGluZXJ5fGVufDB8fHx8MTc3MjA3OTU4N3ww&ixlib=rb-4.1.0&q=85",
             "country": "USA",
             "rating": 4.8,
             "review_count": 127,
             "verified": True,
-            "capabilities": ["Armored Vehicles", "Ballistic Protection", "Vehicle Upgrades"],
+            "capabilities": ["Armored Vehicles", "Ballistic Protection", "Vehicle Upgrades", "System Integration", "Field Support"],
             "active_products": 45,
             "countries_served": 23,
-            "certifications": ["ISO 9001", "ITAR Compliant", "NATO Certified"],
-            "activity_score": 0.92
+            "certifications": ["ISO 9001:2015", "ITAR Compliant", "NATO Certified", "AS9100D"],
+            "activity_score": 0.92,
+            "years_in_operation": 32,
+            "supplier_type": "Manufacturer",
+            "manufacturing_capability": ["CNC Machining", "Composite Fabrication", "Welding & Assembly", "Testing & Validation"],
+            "compliance_registrations": ["ITAR", "EAR", "DFARS"],
+            "headquarters": "Arlington, Virginia, USA",
+            "employees": "500-1000",
+            "annual_revenue": "$100M - $500M",
+            "profile_completeness": 98
         },
         {
             "id": str(uuid.uuid4()),
             "name": "Orion Dynamics",
             "slug": "orion-dynamics",
             "tagline": "Precision Engineering for Modern Defense Platforms",
-            "description": "Orion Dynamics specializes in propulsion engineering, avionics integration, and lightweight composite manufacturing for airborne and tactical defense platforms.",
+            "description": "Orion Dynamics specializes in propulsion engineering, avionics integration, and lightweight composite manufacturing for airborne and tactical defense platforms. Founded in Abu Dhabi, we serve as a key regional supplier with global reach and NATO-compliant export capabilities.",
             "logo_url": "https://images.pexels.com/photos/33748032/pexels-photo-33748032.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "country": "UAE",
             "rating": 4.6,
             "review_count": 89,
             "verified": True,
-            "capabilities": ["Propulsion Engineering", "Avionics Systems", "Composite Airframes", "Defense Export Compliance"],
+            "capabilities": ["Propulsion Engineering", "Avionics Systems", "Composite Airframes", "Defense Export Compliance", "Rapid Prototyping"],
             "active_products": 32,
             "countries_served": 14,
-            "certifications": ["ISO 9001", "NATO Standardization Compliant", "Defense Export Clearance Approved"],
-            "activity_score": 0.88
+            "certifications": ["ISO 9001:2015", "NATO Standardization", "Defense Export Clearance", "AS9100D"],
+            "activity_score": 0.88,
+            "years_in_operation": 15,
+            "supplier_type": "Manufacturer",
+            "manufacturing_capability": ["Composite Manufacturing", "Precision Assembly", "Propulsion Testing", "Avionics Integration"],
+            "compliance_registrations": ["UAE Defense Export", "NATO AQAP"],
+            "headquarters": "Abu Dhabi, UAE",
+            "employees": "200-500",
+            "annual_revenue": "$50M - $100M",
+            "profile_completeness": 95
         },
         {
             "id": str(uuid.uuid4()),
             "name": "TechForge Electronics",
             "slug": "techforge-electronics",
             "tagline": "Advanced Electronics for Defense Applications",
-            "description": "TechForge Electronics delivers cutting-edge electronic components, circuit assemblies, and integrated defense systems to military and government clients globally.",
+            "description": "TechForge Electronics delivers cutting-edge electronic components, circuit assemblies, and integrated defense systems to military and government clients globally. With facilities in Germany and Poland, we provide European defense forces with mission-critical electronics.",
             "logo_url": "https://images.pexels.com/photos/163170/board-printed-circuit-board-computer-electronics-163170.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "country": "Germany",
             "rating": 4.7,
             "review_count": 156,
             "verified": True,
-            "capabilities": ["Circuit Design", "Embedded Systems", "Signal Processing", "EMC Testing"],
+            "capabilities": ["Circuit Design", "Embedded Systems", "Signal Processing", "EMC Testing", "Ruggedization"],
             "active_products": 78,
             "countries_served": 28,
-            "certifications": ["ISO 9001", "ISO 14001", "AQAP 2110"],
-            "activity_score": 0.95
+            "certifications": ["ISO 9001:2015", "ISO 14001", "AQAP 2110", "IPC-A-610 Class 3"],
+            "activity_score": 0.95,
+            "years_in_operation": 25,
+            "supplier_type": "Manufacturer",
+            "manufacturing_capability": ["SMT Assembly", "Through-Hole", "Conformal Coating", "Environmental Testing"],
+            "compliance_registrations": ["EU Export Control", "NATO AQAP", "TEMPEST"],
+            "headquarters": "Munich, Germany",
+            "employees": "1000-5000",
+            "annual_revenue": "$500M - $1B",
+            "profile_completeness": 100
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Nordic Defense Solutions",
+            "slug": "nordic-defense-solutions",
+            "tagline": "Arctic-Grade Defense Systems",
+            "description": "Nordic Defense Solutions specializes in cold-weather military equipment and extreme environment systems. Our products are designed and tested for Arctic operations, ensuring reliability in the harshest conditions on Earth.",
+            "logo_url": "https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+            "country": "Norway",
+            "rating": 4.5,
+            "review_count": 67,
+            "verified": True,
+            "capabilities": ["Cold Weather Systems", "Surveillance Equipment", "Arctic Vehicles", "Environmental Protection"],
+            "active_products": 28,
+            "countries_served": 12,
+            "certifications": ["ISO 9001:2015", "NATO STANAG", "MIL-STD-810H"],
+            "activity_score": 0.82,
+            "years_in_operation": 18,
+            "supplier_type": "System Integrator",
+            "manufacturing_capability": ["System Integration", "Environmental Testing", "Field Customization"],
+            "compliance_registrations": ["Norwegian Export Control", "NATO"],
+            "headquarters": "Oslo, Norway",
+            "employees": "100-200",
+            "annual_revenue": "$25M - $50M",
+            "profile_completeness": 92
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Pacific Rim Aerospace",
+            "slug": "pacific-rim-aerospace",
+            "tagline": "Next-Generation Aerospace Components",
+            "description": "Pacific Rim Aerospace is a premier supplier of aerospace components and systems for military and commercial applications. Based in Singapore, we serve as the regional hub for defense aerospace in the Asia-Pacific region.",
+            "logo_url": "https://images.pexels.com/photos/17854251/pexels-photo-17854251.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+            "country": "Singapore",
+            "rating": 4.4,
+            "review_count": 54,
+            "verified": True,
+            "capabilities": ["Aerospace Components", "MRO Services", "Avionics Repair", "Composite Structures"],
+            "active_products": 41,
+            "countries_served": 18,
+            "certifications": ["AS9100D", "ISO 9001:2015", "NADCAP", "FAA Part 145"],
+            "activity_score": 0.79,
+            "years_in_operation": 22,
+            "supplier_type": "Distributor",
+            "manufacturing_capability": ["Component Distribution", "Light Assembly", "Testing Services"],
+            "compliance_registrations": ["Singapore SDPC", "ITAR Approved"],
+            "headquarters": "Singapore",
+            "employees": "200-500",
+            "annual_revenue": "$100M - $500M",
+            "profile_completeness": 88
         }
     ]
     
-    # Products
+    # Build slug map for suppliers
+    supplier_slug_map = {s["name"]: s["slug"] for s in suppliers}
+    
+    # Products with enhanced data
     products = [
         {
             "id": str(uuid.uuid4()),
             "name": "Rocket Launcher M270 MLRS",
             "slug": "rocket-launcher-m270-mlrs",
             "short_description": "Engineered for high-impact tactical deployment with precision targeting and modular integration capability.",
-            "description": "The M270 Multiple Launch Rocket System is a highly mobile, armored platform capable of delivering devastating firepower. It features automated reload capabilities, advanced fire control systems, and NATO-standard ammunition compatibility.",
+            "description": "The M270 Multiple Launch Rocket System is a highly mobile, armored platform capable of delivering devastating firepower. It features automated reload capabilities, advanced fire control systems, and NATO-standard ammunition compatibility. Proven in combat operations worldwide.",
             "image_url": "https://images.unsplash.com/photo-1771889928359-175bfe7f5ec7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHxtaWxpdGFyeSUyMHJvY2tldCUyMGxhdW5jaGVyfGVufDB8fHx8MTc3MjA3OTU4NXww&ixlib=rb-4.1.0&q=85",
             "category_id": "",
             "category_name": "Weapons & Munitions",
             "supplier_id": "",
             "supplier_name": "Sentinel Defense Systems",
+            "supplier_slug": "",
             "country": "USA",
             "rating": 4.9,
             "review_count": 34,
@@ -765,21 +861,32 @@ async def seed_database():
                 "Weight": "24,756 kg",
                 "Max Speed": "64 km/h"
             },
-            "certifications": ["NATO STANAG", "MIL-STD-810G"],
+            "certifications": ["NATO STANAG", "MIL-STD-810G", "MIL-STD-461"],
             "in_stock": True,
-            "featured": True
+            "featured": True,
+            "dimensions": "6.85m x 2.97m x 2.59m",
+            "weight": "24,756 kg",
+            "operating_temp": "-32°C to +49°C",
+            "operational_range": "Up to 300km",
+            "integration_compatibility": "NATO Fire Control Systems",
+            "compliance_standard": "NATO STANAG 4569",
+            "lead_time": "12-18 months",
+            "application_areas": ["Artillery Support", "Suppression Fire", "Precision Strike", "Counter-Battery"],
+            "subcategory": "Rocket Systems",
+            "delivery_type": "Made to Order"
         },
         {
             "id": str(uuid.uuid4()),
             "name": "Falcon-X Tactical UAV Propulsion System",
             "slug": "falcon-x-tactical-uav-propulsion",
             "short_description": "High-efficiency propulsion engineered for endurance, reliability, and precision flight control.",
-            "description": "The Falcon-X propulsion system is engineered for tactical UAV platforms requiring extended operational range and adaptive thrust control. Built for reliability under extreme operational conditions, it integrates AI-regulated fuel mapping and lightweight composite housing.",
+            "description": "The Falcon-X propulsion system is engineered for tactical UAV platforms requiring extended operational range and adaptive thrust control. Built for reliability under extreme operational conditions, it integrates AI-regulated fuel mapping and lightweight composite housing. Field-proven across multiple theaters.",
             "image_url": "https://images.pexels.com/photos/17854251/pexels-photo-17854251.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "category_id": "",
             "category_name": "UAV & Aerospace",
             "supplier_id": "",
             "supplier_name": "Orion Dynamics",
+            "supplier_slug": "",
             "country": "UAE",
             "rating": 4.6,
             "review_count": 21,
@@ -790,21 +897,32 @@ async def seed_database():
                 "Operating Temperature": "-40°C to +55°C",
                 "Integration Compatibility": "NATO-compliant"
             },
-            "certifications": ["ISO 9001", "NATO Standardization Compliant", "Defense Export Clearance Approved"],
+            "certifications": ["ISO 9001", "NATO Standardization", "Defense Export Clearance"],
             "in_stock": True,
-            "featured": False
+            "featured": False,
+            "dimensions": "1.2m x 0.6m x 0.5m",
+            "weight": "42 kg",
+            "operating_temp": "-40°C to +55°C",
+            "operational_range": "Extended endurance: 24+ hours",
+            "integration_compatibility": "NATO STANAG 4586",
+            "compliance_standard": "MIL-STD-810H",
+            "lead_time": "6-8 months",
+            "application_areas": ["Tactical UAV", "MALE Drones", "Reconnaissance", "Surveillance"],
+            "subcategory": "Propulsion",
+            "delivery_type": "In Stock"
         },
         {
             "id": str(uuid.uuid4()),
             "name": "Titan-7 Armored Hull Assembly",
             "slug": "titan-7-armored-hull",
             "short_description": "Modular armored hull system with multi-threat protection rating.",
-            "description": "The Titan-7 represents the pinnacle of armored vehicle protection technology. Featuring composite armor matrices, mine blast attenuation systems, and modular upgrade capability.",
+            "description": "The Titan-7 represents the pinnacle of armored vehicle protection technology. Featuring composite armor matrices, mine blast attenuation systems, and modular upgrade capability. Designed for integration with wheeled and tracked platforms.",
             "image_url": "https://images.pexels.com/photos/12112278/pexels-photo-12112278.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "category_id": "",
             "category_name": "Armored Systems",
             "supplier_id": "",
             "supplier_name": "Sentinel Defense Systems",
+            "supplier_slug": "",
             "country": "USA",
             "rating": 4.8,
             "review_count": 42,
@@ -817,19 +935,30 @@ async def seed_database():
             },
             "certifications": ["STANAG 4569", "AEP-55", "MIL-STD-662"],
             "in_stock": True,
-            "featured": False
+            "featured": False,
+            "dimensions": "4.5m x 2.4m x 1.8m",
+            "weight": "2,400 kg",
+            "operating_temp": "-40°C to +55°C",
+            "operational_range": "N/A",
+            "integration_compatibility": "Universal mounting system",
+            "compliance_standard": "STANAG 4569 Level 6",
+            "lead_time": "8-12 months",
+            "application_areas": ["APC", "IFV", "MRAP", "Command Vehicles"],
+            "subcategory": "Vehicle Armor",
+            "delivery_type": "Made to Order"
         },
         {
             "id": str(uuid.uuid4()),
             "name": "SecureLink Tactical Radio System",
             "slug": "securelink-tactical-radio",
             "short_description": "Encrypted multi-band tactical communication system with mesh networking.",
-            "description": "SecureLink provides military-grade encrypted communications across multiple frequency bands. Features automatic frequency hopping, mesh network capability, and GPS integration.",
+            "description": "SecureLink provides military-grade encrypted communications across multiple frequency bands. Features automatic frequency hopping, mesh network capability, and GPS integration. TEMPEST certified for secure operations.",
             "image_url": "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "category_id": "",
             "category_name": "Communications",
             "supplier_id": "",
             "supplier_name": "TechForge Electronics",
+            "supplier_slug": "",
             "country": "Germany",
             "rating": 4.7,
             "review_count": 63,
@@ -842,19 +971,30 @@ async def seed_database():
             },
             "certifications": ["TEMPEST", "MIL-STD-188", "NATO STANAG 4609"],
             "in_stock": True,
-            "featured": False
+            "featured": False,
+            "dimensions": "220mm x 85mm x 45mm",
+            "weight": "1.2 kg",
+            "operating_temp": "-40°C to +70°C",
+            "operational_range": "30 km LOS, 10 km NLOS",
+            "integration_compatibility": "NATO Waveform Compatible",
+            "compliance_standard": "MIL-STD-188-181",
+            "lead_time": "4-6 months",
+            "application_areas": ["Infantry", "Vehicle", "Command Post", "Aviation"],
+            "subcategory": "Tactical Radios",
+            "delivery_type": "In Stock"
         },
         {
             "id": str(uuid.uuid4()),
             "name": "Hawk-Eye Thermal Imaging System",
             "slug": "hawk-eye-thermal-imaging",
             "short_description": "Long-range thermal detection and targeting system for surveillance operations.",
-            "description": "The Hawk-Eye system provides unmatched thermal imaging capability for day/night operations. Features advanced image processing, target tracking, and integration with fire control systems.",
+            "description": "The Hawk-Eye system provides unmatched thermal imaging capability for day/night operations. Features advanced image processing, target tracking, and integration with fire control systems. Cooled sensor technology for maximum sensitivity.",
             "image_url": "https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "category_id": "",
             "category_name": "Surveillance & Optics",
             "supplier_id": "",
             "supplier_name": "TechForge Electronics",
+            "supplier_slug": "",
             "country": "Germany",
             "rating": 4.5,
             "review_count": 38,
@@ -867,19 +1007,30 @@ async def seed_database():
             },
             "certifications": ["MIL-STD-810G", "IP67", "EMC Compliant"],
             "in_stock": True,
-            "featured": False
+            "featured": False,
+            "dimensions": "280mm x 150mm x 120mm",
+            "weight": "3.5 kg",
+            "operating_temp": "-40°C to +55°C",
+            "operational_range": "10+ km detection",
+            "integration_compatibility": "Standard NATO mounting",
+            "compliance_standard": "MIL-STD-810H",
+            "lead_time": "3-4 months",
+            "application_areas": ["Vehicle Mounted", "Portable", "Turret Integration", "Border Security"],
+            "subcategory": "Thermal Imaging",
+            "delivery_type": "In Stock"
         },
         {
             "id": str(uuid.uuid4()),
             "name": "Defender PCB Assembly Kit",
             "slug": "defender-pcb-assembly",
             "short_description": "Ruggedized PCB assemblies for defense electronic systems.",
-            "description": "Military-specification printed circuit board assemblies designed for harsh environments. Features conformal coating, vibration resistance, and extended temperature range operation.",
+            "description": "Military-specification printed circuit board assemblies designed for harsh environments. Features conformal coating, vibration resistance, and extended temperature range operation. IPC Class 3 manufacturing standards.",
             "image_url": "https://images.pexels.com/photos/163170/board-printed-circuit-board-computer-electronics-163170.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
             "category_id": "",
             "category_name": "Electronics",
             "supplier_id": "",
             "supplier_name": "TechForge Electronics",
+            "supplier_slug": "",
             "country": "Germany",
             "rating": 4.6,
             "review_count": 89,
@@ -892,7 +1043,89 @@ async def seed_database():
             },
             "certifications": ["IPC-A-610 Class 3", "AS9100D", "ITAR Registered"],
             "in_stock": True,
-            "featured": False
+            "featured": False,
+            "dimensions": "Custom",
+            "weight": "Variable",
+            "operating_temp": "-55°C to +125°C",
+            "operational_range": "N/A",
+            "integration_compatibility": "Custom design",
+            "compliance_standard": "MIL-PRF-55110",
+            "lead_time": "6-8 weeks",
+            "application_areas": ["Avionics", "Radar", "Communications", "Fire Control"],
+            "subcategory": "Circuit Boards",
+            "delivery_type": "Made to Order"
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Arctic Warrior Cold Weather Vehicle Kit",
+            "slug": "arctic-warrior-cold-weather-kit",
+            "short_description": "Complete cold weather modification kit for military vehicles operating in Arctic conditions.",
+            "description": "The Arctic Warrior kit transforms standard military vehicles for extreme cold weather operations. Includes fuel system heaters, battery thermal management, crew compartment insulation, and track/tire modifications for snow and ice.",
+            "image_url": "https://images.pexels.com/photos/12112278/pexels-photo-12112278.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+            "category_id": "",
+            "category_name": "Armored Systems",
+            "supplier_id": "",
+            "supplier_name": "Nordic Defense Solutions",
+            "supplier_slug": "",
+            "country": "Norway",
+            "rating": 4.7,
+            "review_count": 28,
+            "specifications": {
+                "Operating Temperature": "-50°C to +30°C",
+                "Fuel System": "Arctic-grade heating",
+                "Battery": "Thermal management system",
+                "Tracks": "Ice-grip modification",
+                "Installation Time": "48 hours"
+            },
+            "certifications": ["NATO STANAG", "MIL-STD-810H", "ISO 9001"],
+            "in_stock": True,
+            "featured": False,
+            "dimensions": "Kit - multiple components",
+            "weight": "450 kg total",
+            "operating_temp": "-50°C to +30°C",
+            "operational_range": "Arctic operations",
+            "integration_compatibility": "NATO standard vehicles",
+            "compliance_standard": "MIL-STD-810H Method 502.6",
+            "lead_time": "4-6 weeks",
+            "application_areas": ["Arctic Operations", "Mountain Warfare", "Cold Weather Training"],
+            "subcategory": "Vehicle Armor",
+            "delivery_type": "In Stock"
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "SkyNet Satellite Terminal",
+            "slug": "skynet-satellite-terminal",
+            "short_description": "Portable military satellite communication terminal with global coverage.",
+            "description": "SkyNet provides reliable satellite communications for deployed forces. Compact, ruggedized design with automated satellite acquisition and military-grade encryption. Compatible with multiple satellite constellations.",
+            "image_url": "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+            "category_id": "",
+            "category_name": "Communications",
+            "supplier_id": "",
+            "supplier_name": "Pacific Rim Aerospace",
+            "supplier_slug": "",
+            "country": "Singapore",
+            "rating": 4.3,
+            "review_count": 31,
+            "specifications": {
+                "Data Rate": "Up to 10 Mbps",
+                "Encryption": "Type 1 / AES-256",
+                "Antenna Size": "0.6m deployable",
+                "Setup Time": "Under 10 minutes",
+                "Power": "AC/DC/Battery"
+            },
+            "certifications": ["MIL-STD-188-165", "Type 1 Encryption", "IP65"],
+            "in_stock": True,
+            "featured": False,
+            "dimensions": "Transport case: 60cm x 50cm x 30cm",
+            "weight": "25 kg complete",
+            "operating_temp": "-30°C to +55°C",
+            "operational_range": "Global satellite coverage",
+            "integration_compatibility": "Multi-constellation support",
+            "compliance_standard": "MIL-STD-188-165A",
+            "lead_time": "8-10 weeks",
+            "application_areas": ["Forward Operating Base", "Mobile Command", "Expeditionary", "Naval"],
+            "subcategory": "Satellite Systems",
+            "delivery_type": "In Stock"
         }
     ]
     
@@ -903,6 +1136,11 @@ async def seed_database():
     for product in products:
         product["category_id"] = category_map.get(product["category_name"], "")
         product["supplier_id"] = supplier_map.get(product["supplier_name"], "")
+        product["supplier_slug"] = supplier_slug_map.get(product["supplier_name"], "")
+    
+    # Update category featured suppliers
+    for cat in categories:
+        cat["featured_suppliers"] = [s["id"] for s in suppliers[:2]]
     
     # Insert all data
     await db.categories.insert_many(categories)
@@ -910,6 +1148,14 @@ async def seed_database():
     await db.products.insert_many(products)
     
     return {"message": "Database seeded successfully", "categories": len(categories), "suppliers": len(suppliers), "products": len(products)}
+
+@api_router.post("/reseed")
+async def reseed_database():
+    """Clear and reseed database with enhanced data"""
+    await db.categories.delete_many({})
+    await db.suppliers.delete_many({})
+    await db.products.delete_many({})
+    return await seed_database()
 
 # ===================== ROOT =====================
 
