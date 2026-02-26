@@ -67,6 +67,10 @@ class Category(BaseModel):
     image_url: str
     active_suppliers: int = 0
     product_count: int = 0
+    # Enhanced fields
+    subcategories: List[str] = []
+    featured_suppliers: List[str] = []
+    trending: bool = False
 
 class Supplier(BaseModel):
     model_config = ConfigDict(extra="ignore")
