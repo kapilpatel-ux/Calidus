@@ -1,0 +1,146 @@
+{
+  "identity": {
+    "persona": "E1 - The Anti-AI Designer",
+    "mission": "Create a defense-grade, mission-critical marketplace that radiates authority, precision, and trust. No generic SaaS aesthetics.",
+    "principles": [
+      "Fusion over Imitation: Mix 'Military HUD' precision with 'Swiss' typographic hierarchy.",
+      "Emotion First: The user should feel secure, empowered, and focused.",
+      "Content is King: Data densities must be high but legible. Every pixel counts.",
+      "Negative Space: Use deep black voids to frame content, not just white space.",
+      "Contrast: High contrast for readability in 'low light' conditions (simulated)."
+    ]
+  },
+  "visual_language": {
+    "theme": "dark",
+    "palette": {
+      "archetype": "The Performance Pro (Elite Defense)",
+      "primary": {
+        "background": "#050505",
+        "surface": "#0F1115",
+        "surface_highlight": "#1A1D24",
+        "border": "#272A30"
+      },
+      "accent": {
+        "main": "#00CED1",
+        "hover": "#00E5E8",
+        "signal_success": "#10B981",
+        "signal_warning": "#F59E0B",
+        "signal_danger": "#EF4444"
+      },
+      "text": {
+        "primary": "#FFFFFF",
+        "secondary": "#9CA3AF",
+        "muted": "#4B5563"
+      }
+    },
+    "typography": {
+      "headings": {
+        "family": "Barlow Condensed, sans-serif",
+        "weights": ["600", "700", "800"],
+        "tracking": "tracking-tight",
+        "usage": "Use for all section titles, hero text, and data values."
+      },
+      "body": {
+        "family": "Inter, sans-serif",
+        "weights": ["400", "500"],
+        "tracking": "tracking-normal",
+        "usage": "Use for descriptions, labels, and long-form text."
+      },
+      "mono": {
+        "family": "JetBrains Mono, monospace",
+        "usage": "Use for codes, serial numbers, and technical specs."
+      }
+    },
+    "borders": {
+      "radius": "rounded-sm",
+      "style": "border border-border/40",
+      "special": "Use 'tracing beam' effects on active cards."
+    }
+  },
+  "layout_strategy": {
+    "container": "max-w-[1440px] mx-auto px-6 md:px-12",
+    "grid": {
+      "landing": "Grid Mode A (Tetris): Asymmetrical layouts for visual interest.",
+      "dashboard": "Grid Mode B (High Density): Strict data grids, 100% height utilization."
+    },
+    "spacing": "Generous padding (py-24) for landing sections, tight (p-4) for dashboard widgets."
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-accent text-black font-bold uppercase tracking-wider rounded-sm hover:bg-accent-hover hover:shadow-[0_0_15px_rgba(0,206,209,0.4)] transition-all",
+      "secondary": "bg-transparent border border-accent/50 text-accent hover:bg-accent/10 rounded-sm uppercase tracking-wider",
+      "ghost": "text-muted-foreground hover:text-white hover:bg-white/5"
+    },
+    "cards": {
+      "style": "bg-card border border-border/50 rounded-sm overflow-hidden",
+      "hover": "hover:border-accent/50 hover:shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all duration-300 group"
+    },
+    "inputs": {
+      "style": "bg-background border-border/50 rounded-sm focus:border-accent focus:ring-1 focus:ring-accent placeholder:text-muted-foreground/50"
+    }
+  },
+  "assets": {
+    "hero_images": [
+      {
+        "url": "https://images.unsplash.com/photo-1771889928359-175bfe7f5ec7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHxtaWxpdGFyeSUyMHJvY2tldCUyMGxhdW5jaGVyfGVufDB8fHx8MTc3MjA3OTU4NXww&ixlib=rb-4.1.0&q=85",
+        "alt": "Military missile launcher truck",
+        "placement": "Hero Background"
+      },
+      {
+        "url": "https://images.pexels.com/photos/12112278/pexels-photo-12112278.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "alt": "Challenger 2 Tank",
+        "placement": "Featured Product"
+      }
+    ],
+    "category_images": [
+      {
+        "url": "https://images.pexels.com/photos/163170/board-printed-circuit-board-computer-electronics-163170.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "alt": "Defense Electronics",
+        "category": "Electronics"
+      },
+      {
+        "url": "https://images.pexels.com/photos/33748032/pexels-photo-33748032.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "alt": "CNC Machinery",
+        "category": "Machinery"
+      },
+      {
+        "url": "https://images.pexels.com/photos/17854251/pexels-photo-17854251.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "alt": "Military Drone",
+        "category": "Unmanned Systems"
+      }
+    ],
+    "supplier_logos": [
+      {
+        "url": "https://images.unsplash.com/photo-1738162837627-5794e6563cac?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwY25jJTIwbWFjaGluZXJ5fGVufDB8fHx8MTc3MjA3OTU4N3ww&ixlib=rb-4.1.0&q=85",
+        "alt": "Industrial Supplier 1"
+      }
+    ]
+  },
+  "implementation_steps": [
+    "Install dependencies: framer-motion, lucide-react, clsx, tailwind-merge",
+    "Configure Tailwind: Add Barlow Condensed and Inter fonts, define 'accent' colors.",
+    "Global CSS: Set body background to #050505 and text to white. Add '.dark' class by default.",
+    "Create UI Components: Customize Shadcn components to remove rounded-xl and use rounded-sm.",
+    "Develop Homepage: Implement Hero, Categories (Horizontal Scroll), Suppliers, Featured Product.",
+    "Develop Inner Pages: Category Detail, Product Detail, Supplier Profile.",
+    "Auth & Forms: Implement Registration with multi-step form."
+  ],
+  "universal_guidelines": [
+    "You tend to converge toward generic, 'on distribution' outputs. Avoid this.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur) sparingly.",
+    "You MUST NOT apply universal transition (e.g., transition: all).",
+    "You MUST NOT center align the app container.",
+    "Always use modern button styles (sharp, uppercase for this persona).",
+    "NEVER use AI assistant Emoji characters.",
+    "Every interaction needs micro-animations.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Subtle grain textures, noise overlays, custom cursors.",
+    "Prioritize using pre-existing components from src/components/ui.",
+    "Components MUST use named exports.",
+    "Use 'sonner' for toasts.",
+    "All interactive elements MUST include data-testid attributes."
+  ]
+}
