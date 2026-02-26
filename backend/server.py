@@ -312,6 +312,10 @@ async def get_products(
     min_rating: Optional[float] = None,
     in_stock: Optional[bool] = None,
     featured: Optional[bool] = None,
+    subcategory: Optional[str] = None,
+    country: Optional[str] = None,
+    certification: Optional[str] = None,
+    delivery_type: Optional[str] = None,
     limit: int = 50
 ):
     query = {}
@@ -325,6 +329,14 @@ async def get_products(
         query["in_stock"] = in_stock
     if featured is not None:
         query["featured"] = featured
+    if subcategory:
+        query["subcategory"] = subcategory
+    if country:
+        query["country"] = country
+    if certification:
+        query["certifications"] = {"$in": [certification]}
+    if delivery_type:
+        query["delivery_type"] = delivery_type
     
     products = await db.products.find(query, {"_id": 0}).to_list(limit)
     return products
