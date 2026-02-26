@@ -98,6 +98,7 @@ class Product(BaseModel):
     category_name: str
     supplier_id: str
     supplier_name: str
+    supplier_slug: str = ""
     country: str
     rating: float = 0.0
     review_count: int = 0
@@ -105,6 +106,17 @@ class Product(BaseModel):
     certifications: List[str] = []
     in_stock: bool = True
     featured: bool = False
+    # Enhanced fields
+    dimensions: Optional[str] = None
+    weight: Optional[str] = None
+    operating_temp: Optional[str] = None
+    operational_range: Optional[str] = None
+    integration_compatibility: Optional[str] = None
+    compliance_standard: Optional[str] = None
+    lead_time: Optional[str] = None
+    application_areas: List[str] = []
+    subcategory: Optional[str] = None
+    delivery_type: str = "In Stock"  # In Stock, Made to Order
 
 class ContactSubmission(BaseModel):
     model_config = ConfigDict(extra="ignore")
