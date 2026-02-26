@@ -345,8 +345,41 @@ async def get_products(
 async def get_product(slug: str):
     product = await db.products.find_one({"slug": slug}, {"_id": 0})
     if not product:
+        # Try by ID if slug doesn't match
+        product = await db.products.find_one({"id": slug}, {"_id": 0})
+    if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
+
+@api_router.get("/products/{slug}/related")
+async def get_related_products(slug: str, limit: int = 4):
+    product = await db.products.find_one({"$or": [{"slug": slug}, {"id": slug}]}, {"_id": 0})
+    if not product:
+        return []
+    
+    related = await db.products.find(
+        {"category_id": product["category_id"], "id": {"$ne": product["id"]}},
+        {"_id": 0}
+    ).to_list(limit)
+    return related
+
+@api_router.get("/filter-options")
+async def get_filter_options():
+    """Get all available filter options"""
+    countries = await db.products.distinct("country")
+    certifications = await db.products.distinct("certifications")
+    subcategories = await db.products.distinct("subcategory")
+    supplier_types = await db.suppliers.distinct("supplier_type")
+    delivery_types = ["In Stock", "Made to Order"]
+    
+    return {
+        "countries": [c for c in countries if c],
+        "certifications": [c for c in certifications if c],
+        "subcategories": [s for s in subcategories if s],
+        "supplier_types": supplier_types,
+        "delivery_types": delivery_types,
+        "ratings": [4, 3, 2, 1]
+    }
 
 # ===================== SUPPLIER ROUTES =====================
 
