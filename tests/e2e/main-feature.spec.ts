@@ -42,11 +42,9 @@ test.describe('Search & Browse Features', () => {
     await page.goto('/components', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('browse-components-page')).toBeVisible();
     await expect(page.getByTestId('page-title')).toBeVisible();
-    // Categories load from API - wait for them
-    const categoryLinks = page.locator('a[href*="/category/"]');
-    await expect(categoryLinks.first()).toBeVisible({ timeout: 15000 });
-    const count = await categoryLinks.count();
-    expect(count).toBeGreaterThanOrEqual(6);
+    // Categories load from API with testids category-card-0 to category-card-5
+    await expect(page.getByTestId('category-card-0')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByTestId('category-card-5')).toBeVisible({ timeout: 15000 });
   });
 
   test('browse components search works', async ({ page }) => {
