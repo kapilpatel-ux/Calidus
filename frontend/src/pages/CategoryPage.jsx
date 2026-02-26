@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Star, CheckCircle, Filter, ChevronDown, ArrowRight } from "lucide-react";
+import { Star, CheckCircle, Filter, ChevronDown, ArrowRight, X, Package, Users, TrendingUp } from "lucide-react";
 import axios from "axios";
 import { API } from "../App";
 import { Checkbox } from "../components/ui/checkbox";
@@ -10,19 +10,29 @@ export const CategoryPage = () => {
   const { slug } = useParams();
   const [category, setCategory] = useState(null);
   const [products, setProducts] = useState([]);
+  const [filterOptions, setFilterOptions] = useState({});
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     minRating: null,
     inStock: null,
+    country: null,
+    certification: null,
+    subcategory: null,
+    deliveryType: null,
     sortBy: "rating"
   });
+  const [filtersOpen, setFiltersOpen] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const catRes = await axios.get(`${API}/categories/${slug}`);
+        const [catRes, filterRes] = await Promise.all([
+          axios.get(`${API}/categories/${slug}`),
+          axios.get(`${API}/filter-options`)
+        ]);
         setCategory(catRes.data);
+        setFilterOptions(filterRes.data);
         
         const prodRes = await axios.get(`${API}/products?category=${catRes.data.id}`);
         setProducts(prodRes.data || []);
@@ -38,11 +48,30 @@ export const CategoryPage = () => {
   const filteredProducts = products
     .filter(p => !filters.minRating || p.rating >= filters.minRating)
     .filter(p => filters.inStock === null || p.in_stock === filters.inStock)
+    .filter(p => !filters.country || p.country === filters.country)
+    .filter(p => !filters.certification || p.certifications?.includes(filters.certification))
+    .filter(p => !filters.subcategory || p.subcategory === filters.subcategory)
+    .filter(p => !filters.deliveryType || p.delivery_type === filters.deliveryType)
     .sort((a, b) => {
       if (filters.sortBy === "rating") return b.rating - a.rating;
       if (filters.sortBy === "name") return a.name.localeCompare(b.name);
+      if (filters.sortBy === "newest") return -1;
       return 0;
     });
+
+  const clearFilters = () => {
+    setFilters({
+      minRating: null,
+      inStock: null,
+      country: null,
+      certification: null,
+      subcategory: null,
+      deliveryType: null,
+      sortBy: "rating"
+    });
+  };
+
+  const activeFilterCount = Object.values(filters).filter(v => v !== null && v !== "rating").length;
 
   if (loading) {
     return (
@@ -72,9 +101,33 @@ export const CategoryPage = () => {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: 'Barlow Condensed' }} data-testid="category-title">
             {category.name.toUpperCase()} <span className="text-[#00CED1]">COMPONENTS</span>
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl">
+          <p className="text-gray-400 text-lg max-w-2xl mb-8">
             {category.description}
           </p>
+          
+          {/* Category Stats */}
+          <div className="flex flex-wrap gap-6">
+            <div className="flex items-center gap-3 bg-[#0F1115]/80 border border-[#272A30] rounded-sm px-4 py-3">
+              <Package className="w-5 h-5 text-[#00CED1]" />
+              <div>
+                <p className="text-white font-semibold">{category.product_count}</p>
+                <p className="text-gray-500 text-xs">Components</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 bg-[#0F1115]/80 border border-[#272A30] rounded-sm px-4 py-3">
+              <Users className="w-5 h-5 text-[#00CED1]" />
+              <div>
+                <p className="text-white font-semibold">{category.active_suppliers}</p>
+                <p className="text-gray-500 text-xs">Active Suppliers</p>
+              </div>
+            </div>
+            {category.trending && (
+              <div className="flex items-center gap-3 bg-[#00CED1]/10 border border-[#00CED1]/30 rounded-sm px-4 py-3">
+                <TrendingUp className="w-5 h-5 text-[#00CED1]" />
+                <p className="text-[#00CED1] text-sm font-medium">Trending Category</p>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -83,19 +136,53 @@ export const CategoryPage = () => {
         <div className="container-custom">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar Filters */}
-            <div className="lg:w-64 flex-shrink-0">
+            <div className="lg:w-72 flex-shrink-0">
               <div className="bg-[#0F1115] border border-[#272A30] rounded-sm p-6 sticky top-24" data-testid="filters-sidebar">
-                <div className="flex items-center gap-2 mb-6">
-                  <Filter className="w-5 h-5 text-[#00CED1]" />
-                  <h3 className="text-white font-semibold">Filters</h3>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-5 h-5 text-[#00CED1]" />
+                    <h3 className="text-white font-semibold">Filters</h3>
+                    {activeFilterCount > 0 && (
+                      <span className="bg-[#00CED1] text-black text-xs font-bold px-2 py-0.5 rounded-sm">
+                        {activeFilterCount}
+                      </span>
+                    )}
+                  </div>
+                  {activeFilterCount > 0 && (
+                    <button
+                      onClick={clearFilters}
+                      className="text-[#00CED1] text-sm hover:underline flex items-center gap-1"
+                      data-testid="clear-filters-btn"
+                    >
+                      <X className="w-3 h-3" /> Clear
+                    </button>
+                  )}
                 </div>
+
+                {/* Subcategory Filter */}
+                {category.subcategories?.length > 0 && (
+                  <div className="mb-6">
+                    <p className="text-gray-400 text-sm font-medium mb-3">Subcategory</p>
+                    <div className="space-y-2">
+                      {category.subcategories.map((sub) => (
+                        <label key={sub} className="flex items-center gap-2 cursor-pointer group">
+                          <Checkbox
+                            checked={filters.subcategory === sub}
+                            onCheckedChange={(checked) => setFilters(f => ({ ...f, subcategory: checked ? sub : null }))}
+                          />
+                          <span className="text-gray-400 text-sm group-hover:text-white transition-colors">{sub}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Rating Filter */}
                 <div className="mb-6">
-                  <p className="text-gray-400 text-sm mb-3">Minimum Rating</p>
+                  <p className="text-gray-400 text-sm font-medium mb-3">Minimum Rating</p>
                   <div className="space-y-2">
                     {[4, 3, 2].map(rating => (
-                      <label key={rating} className="flex items-center gap-2 cursor-pointer">
+                      <label key={rating} className="flex items-center gap-2 cursor-pointer group">
                         <Checkbox
                           checked={filters.minRating === rating}
                           onCheckedChange={(checked) => setFilters(f => ({ ...f, minRating: checked ? rating : null }))}
@@ -105,117 +192,209 @@ export const CategoryPage = () => {
                           {[...Array(5)].map((_, i) => (
                             <Star key={i} className={`w-3 h-3 ${i < rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-600'}`} />
                           ))}
-                          <span className="text-gray-400 text-sm ml-1">& up</span>
+                          <span className="text-gray-400 text-sm ml-1 group-hover:text-white transition-colors">& up</span>
                         </div>
                       </label>
                     ))}
                   </div>
                 </div>
 
-                {/* Stock Filter */}
-                <div className="mb-6">
-                  <p className="text-gray-400 text-sm mb-3">Availability</p>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <Checkbox
-                      checked={filters.inStock === true}
-                      onCheckedChange={(checked) => setFilters(f => ({ ...f, inStock: checked ? true : null }))}
-                      data-testid="filter-in-stock"
-                    />
-                    <span className="text-gray-400 text-sm">In Stock Only</span>
-                  </label>
-                </div>
+                {/* Country Filter */}
+                {filterOptions.countries?.length > 0 && (
+                  <div className="mb-6">
+                    <p className="text-gray-400 text-sm font-medium mb-3">Country of Origin</p>
+                    <Select value={filters.country || ""} onValueChange={(val) => setFilters(f => ({ ...f, country: val || null }))}>
+                      <SelectTrigger className="bg-[#050505] border-[#272A30] text-white">
+                        <SelectValue placeholder="All Countries" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#0F1115] border-[#272A30]">
+                        <SelectItem value="">All Countries</SelectItem>
+                        {filterOptions.countries.map((country) => (
+                          <SelectItem key={country} value={country}>{country}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
-                {/* Clear Filters */}
-                <button
-                  onClick={() => setFilters({ minRating: null, inStock: null, sortBy: "rating" })}
-                  className="text-[#00CED1] text-sm hover:underline"
-                  data-testid="clear-filters-btn"
-                >
-                  Clear all filters
-                </button>
+                {/* Certification Filter */}
+                {filterOptions.certifications?.length > 0 && (
+                  <div className="mb-6">
+                    <p className="text-gray-400 text-sm font-medium mb-3">Certification</p>
+                    <Select value={filters.certification || ""} onValueChange={(val) => setFilters(f => ({ ...f, certification: val || null }))}>
+                      <SelectTrigger className="bg-[#050505] border-[#272A30] text-white">
+                        <SelectValue placeholder="All Certifications" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#0F1115] border-[#272A30]">
+                        <SelectItem value="">All Certifications</SelectItem>
+                        {filterOptions.certifications.map((cert) => (
+                          <SelectItem key={cert} value={cert}>{cert}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Delivery Type Filter */}
+                <div className="mb-6">
+                  <p className="text-gray-400 text-sm font-medium mb-3">Availability</p>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <Checkbox
+                        checked={filters.inStock === true}
+                        onCheckedChange={(checked) => setFilters(f => ({ ...f, inStock: checked ? true : null }))}
+                        data-testid="filter-in-stock"
+                      />
+                      <span className="text-gray-400 text-sm group-hover:text-white transition-colors">In Stock Only</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <Checkbox
+                        checked={filters.deliveryType === "In Stock"}
+                        onCheckedChange={(checked) => setFilters(f => ({ ...f, deliveryType: checked ? "In Stock" : null }))}
+                      />
+                      <span className="text-gray-400 text-sm group-hover:text-white transition-colors">Ready to Ship</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <Checkbox
+                        checked={filters.deliveryType === "Made to Order"}
+                        onCheckedChange={(checked) => setFilters(f => ({ ...f, deliveryType: checked ? "Made to Order" : null }))}
+                      />
+                      <span className="text-gray-400 text-sm group-hover:text-white transition-colors">Made to Order</span>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Products Grid */}
             <div className="flex-1">
               {/* Sort Header */}
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 bg-[#0F1115] border border-[#272A30] rounded-sm px-4 py-3">
                 <p className="text-gray-400">
                   <span className="text-white font-medium">{filteredProducts.length}</span> products found
                 </p>
                 <Select value={filters.sortBy} onValueChange={(val) => setFilters(f => ({ ...f, sortBy: val }))}>
-                  <SelectTrigger className="w-48 bg-[#0F1115] border-[#272A30]" data-testid="sort-select">
+                  <SelectTrigger className="w-48 bg-[#050505] border-[#272A30]" data-testid="sort-select">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0F1115] border-[#272A30]">
                     <SelectItem value="rating">Highest Rated</SelectItem>
                     <SelectItem value="name">Name A-Z</SelectItem>
+                    <SelectItem value="newest">Newest First</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Products */}
-              <div className="grid md:grid-cols-2 gap-6">
-                {filteredProducts.map((product, idx) => (
-                  <div
-                    key={product.id}
-                    className="bg-[#0F1115] border border-[#272A30] rounded-sm overflow-hidden card-hover"
-                    data-testid={`product-card-${idx}`}
-                  >
-                    <div className="aspect-video relative">
-                      <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
-                      {product.in_stock && (
-                        <span className="absolute top-3 right-3 bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded-sm">
-                          In Stock
-                        </span>
-                      )}
-                    </div>
-                    <div className="p-5">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-gray-500 text-xs">{product.supplier_name}</span>
-                        <CheckCircle className="w-3 h-3 text-green-500" />
-                        <span className="text-gray-500 text-xs">• {product.country}</span>
-                      </div>
-                      <h3 className="text-white font-semibold mb-2">{product.name}</h3>
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className={`w-3 h-3 ${i < Math.floor(product.rating) ? 'text-yellow-500 fill-yellow-500' : 'text-gray-600'}`} />
-                          ))}
+              {filteredProducts.length > 0 ? (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {filteredProducts.map((product, idx) => (
+                    <div
+                      key={product.id}
+                      className="bg-[#0F1115] border border-[#272A30] rounded-sm overflow-hidden card-hover"
+                      data-testid={`product-card-${idx}`}
+                    >
+                      <div className="aspect-video relative">
+                        <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                        <div className="absolute top-3 right-3 flex gap-2">
+                          {product.in_stock && (
+                            <span className="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded-sm">
+                              In Stock
+                            </span>
+                          )}
+                          {product.delivery_type === "Made to Order" && (
+                            <span className="bg-blue-500/20 text-blue-400 text-xs px-2 py-1 rounded-sm">
+                              Made to Order
+                            </span>
+                          )}
                         </div>
-                        <span className="text-white text-sm">{product.rating}</span>
                       </div>
-                      <p className="text-gray-400 text-sm mb-4 line-clamp-2">{product.short_description}</p>
-                      <div className="flex gap-3">
-                        <Link
-                          to={`/product/${product.slug}`}
-                          className="btn-secondary flex-1 text-center text-sm py-2"
-                          data-testid={`view-details-${idx}`}
-                        >
-                          VIEW DETAILS
-                        </Link>
-                        <Link
-                          to={`/supplier/${product.supplier_id}`}
-                          className="btn-primary flex-1 text-center text-sm py-2"
-                          data-testid={`contact-supplier-${idx}`}
-                        >
-                          CONTACT SUPPLIER
-                        </Link>
+                      <div className="p-5">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Link 
+                            to={`/supplier/${product.supplier_slug || product.supplier_id}`}
+                            className="text-gray-500 text-xs hover:text-[#00CED1] transition-colors"
+                          >
+                            {product.supplier_name}
+                          </Link>
+                          <CheckCircle className="w-3 h-3 text-green-500" />
+                          <span className="text-gray-500 text-xs">• {product.country}</span>
+                        </div>
+                        <h3 className="text-white font-semibold mb-2">{product.name}</h3>
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="flex items-center">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} className={`w-3 h-3 ${i < Math.floor(product.rating) ? 'text-yellow-500 fill-yellow-500' : 'text-gray-600'}`} />
+                            ))}
+                          </div>
+                          <span className="text-white text-sm">{product.rating}</span>
+                          <span className="text-gray-500 text-xs">({product.review_count} reviews)</span>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-4 line-clamp-2">{product.short_description}</p>
+                        
+                        {/* Quick Specs */}
+                        {product.lead_time && (
+                          <p className="text-gray-500 text-xs mb-4">
+                            Lead Time: <span className="text-gray-300">{product.lead_time}</span>
+                          </p>
+                        )}
+                        
+                        <div className="flex gap-3">
+                          <Link
+                            to={`/product/${product.slug}`}
+                            className="btn-secondary flex-1 text-center text-sm py-2"
+                            data-testid={`view-details-${idx}`}
+                          >
+                            VIEW DETAILS
+                          </Link>
+                          <Link
+                            to={`/supplier/${product.supplier_slug || product.supplier_id}`}
+                            className="btn-primary flex-1 text-center text-sm py-2"
+                            data-testid={`contact-supplier-${idx}`}
+                          >
+                            CONTACT
+                          </Link>
+                        </div>
                       </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                /* Empty State */
+                <div className="bg-[#0F1115] border border-[#272A30] rounded-sm p-12 text-center" data-testid="empty-state">
+                  <div className="w-16 h-16 bg-[#1A1D24] rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Package className="w-8 h-8 text-gray-500" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-3" style={{ fontFamily: 'Barlow Condensed' }}>
+                    NO DIRECT MATCH FOUND
+                  </h3>
+                  <p className="text-gray-400 mb-6 max-w-md mx-auto">
+                    Our ecosystem is continuously expanding. Connect with our experts to help identify the right supplier or component.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                      onClick={clearFilters}
+                      className="btn-secondary"
+                    >
+                      CLEAR FILTERS
+                    </button>
+                    <Link to="/contact" className="btn-primary flex items-center justify-center gap-2">
+                      SPEAK TO OUR EXPERTS
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                  
+                  {/* Suggested Categories */}
+                  <div className="mt-8 pt-8 border-t border-[#272A30]">
+                    <p className="text-gray-500 text-sm mb-4">Try exploring related categories:</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      <Link to="/category/electronics" className="text-[#00CED1] text-sm hover:underline">Electronics</Link>
+                      <span className="text-gray-600">•</span>
+                      <Link to="/category/communications" className="text-[#00CED1] text-sm hover:underline">Communications</Link>
+                      <span className="text-gray-600">•</span>
+                      <Link to="/category/surveillance-optics" className="text-[#00CED1] text-sm hover:underline">Surveillance</Link>
                     </div>
                   </div>
-                ))}
-              </div>
-
-              {filteredProducts.length === 0 && (
-                <div className="text-center py-16">
-                  <p className="text-gray-400 mb-4">No products found matching your filters.</p>
-                  <button
-                    onClick={() => setFilters({ minRating: null, inStock: null, sortBy: "rating" })}
-                    className="text-[#00CED1] hover:underline"
-                  >
-                    Clear filters
-                  </button>
                 </div>
               )}
             </div>
