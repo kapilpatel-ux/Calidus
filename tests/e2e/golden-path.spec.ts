@@ -39,9 +39,11 @@ test.describe('Golden Path - Defense Connect End-to-End Journey', () => {
       await expect(page.getByTestId('product-page')).toBeVisible();
       await expect(page.getByTestId('product-title')).toBeVisible();
 
-      // 5. Click contact supplier
+      // 5. Scroll to top and click contact supplier
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await expect(page.getByTestId('contact-supplier-btn')).toBeVisible({ timeout: 5000 });
       await page.getByTestId('contact-supplier-btn').click({ force: true });
-      await expect(page.getByRole('dialog')).toBeVisible();
+      await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 });
       await expect(page.getByTestId('inquiry-name')).toBeVisible();
     }
   });
