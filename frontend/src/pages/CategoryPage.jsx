@@ -203,12 +203,12 @@ export const CategoryPage = () => {
                 {filterOptions.countries?.length > 0 && (
                   <div className="mb-6">
                     <p className="text-gray-400 text-sm font-medium mb-3">Country of Origin</p>
-                    <Select value={filters.country || ""} onValueChange={(val) => setFilters(f => ({ ...f, country: val || null }))}>
+                    <Select value={filters.country || "all"} onValueChange={(val) => setFilters(f => ({ ...f, country: val === "all" ? null : val }))}>
                       <SelectTrigger className="bg-[#050505] border-[#272A30] text-white">
                         <SelectValue placeholder="All Countries" />
                       </SelectTrigger>
                       <SelectContent className="bg-[#0F1115] border-[#272A30]">
-                        <SelectItem value="">All Countries</SelectItem>
+                        <SelectItem value="all">All Countries</SelectItem>
                         {filterOptions.countries.map((country) => (
                           <SelectItem key={country} value={country}>{country}</SelectItem>
                         ))}
@@ -221,12 +221,12 @@ export const CategoryPage = () => {
                 {filterOptions.certifications?.length > 0 && (
                   <div className="mb-6">
                     <p className="text-gray-400 text-sm font-medium mb-3">Certification</p>
-                    <Select value={filters.certification || ""} onValueChange={(val) => setFilters(f => ({ ...f, certification: val || null }))}>
+                    <Select value={filters.certification || "all"} onValueChange={(val) => setFilters(f => ({ ...f, certification: val === "all" ? null : val }))}>
                       <SelectTrigger className="bg-[#050505] border-[#272A30] text-white">
                         <SelectValue placeholder="All Certifications" />
                       </SelectTrigger>
                       <SelectContent className="bg-[#0F1115] border-[#272A30]">
-                        <SelectItem value="">All Certifications</SelectItem>
+                        <SelectItem value="all">All Certifications</SelectItem>
                         {filterOptions.certifications.map((cert) => (
                           <SelectItem key={cert} value={cert}>{cert}</SelectItem>
                         ))}
