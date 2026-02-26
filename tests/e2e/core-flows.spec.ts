@@ -87,7 +87,7 @@ test.describe('Homepage & Navigation', () => {
   });
 
   test('navbar REGISTER and LOGIN buttons exist', async ({ page }) => {
-    await expect(page.getByRole('link', { name: 'REGISTER' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'LOGIN' })).toBeVisible();
+    await expect(page.getByTestId('register-supplier-btn')).toBeVisible();
+    await expect(page.getByTestId('login-btn')).toBeVisible();
   });
 });

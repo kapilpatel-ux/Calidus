@@ -11,22 +11,23 @@ test.describe('Search & Browse Features', () => {
 
   test('AI search suggestions appear when typing in navbar', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    const navSearch = page.getByPlaceholder('Search components, suppliers');
+    const navSearch = page.getByTestId('navbar').getByTestId('search-input');
     await navSearch.fill('armor');
-    // Wait for suggestions dropdown
-    await expect(page.locator('[data-testid="search-suggestions"]')).toBeVisible({ timeout: 10000 });
-    // Suggestions should appear
-    const suggestions = page.locator('[data-testid="suggestion-item"]');
-    await expect(suggestions.first()).toBeVisible();
+    // Wait for suggestions dropdown to appear (debounced 300ms + API call)
+    await expect(page.getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
+    // Suggestions should appear with indexed testids
+    await expect(page.getByTestId('suggestion-0')).toBeVisible();
   });
 
   test('search suggestions show type tags (product/supplier/category)', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    const navSearch = page.getByPlaceholder('Search components, suppliers');
+    const navSearch = page.getByTestId('navbar').getByTestId('search-input');
     await navSearch.fill('defense');
-    await expect(page.locator('[data-testid="search-suggestions"]')).toBeVisible({ timeout: 10000 });
-    // Should show typed suggestions
-    await expect(page.locator('[data-testid="suggestion-item"]').first()).toBeVisible();
+    await expect(page.getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
+    // Each suggestion has a type badge
+    await expect(page.getByTestId('suggestion-0')).toBeVisible();
+    const suggestionText = await page.getByTestId('suggestion-0').textContent();
+    expect(suggestionText).toMatch(/product|supplier|category/i);
   });
 
   test('search form submits and navigates to search results', async ({ page }) => {
