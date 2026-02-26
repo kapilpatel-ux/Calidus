@@ -405,6 +405,9 @@ async def get_suppliers(
 async def get_supplier(slug: str):
     supplier = await db.suppliers.find_one({"slug": slug}, {"_id": 0})
     if not supplier:
+        # Try by ID if slug doesn't match
+        supplier = await db.suppliers.find_one({"id": slug}, {"_id": 0})
+    if not supplier:
         raise HTTPException(status_code=404, detail="Supplier not found")
     return supplier
 
