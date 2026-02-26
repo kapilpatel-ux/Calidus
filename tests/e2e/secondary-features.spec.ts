@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { dismissToasts, removeEmergentBadge } from '../fixtures/helpers';
-import { v4 as uuidv4 } from 'crypto';
 
 const BASE = 'https://trusted-supply-chain.preview.emergentagent.com';
 
