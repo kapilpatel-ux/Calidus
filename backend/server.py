@@ -85,6 +85,15 @@ class Supplier(BaseModel):
     countries_served: int = 0
     certifications: List[str] = []
     activity_score: float = 0.0
+    # Enhanced fields
+    years_in_operation: int = 0
+    supplier_type: str = "Manufacturer"  # Manufacturer, Distributor, System Integrator
+    manufacturing_capability: List[str] = []
+    compliance_registrations: List[str] = []
+    headquarters: Optional[str] = None
+    employees: Optional[str] = None
+    annual_revenue: Optional[str] = None
+    profile_completeness: int = 100
 
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
