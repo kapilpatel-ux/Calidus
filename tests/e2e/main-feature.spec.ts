@@ -51,9 +51,10 @@ test.describe('Search & Browse Features', () => {
 
   test('browse components search works', async ({ page }) => {
     await page.goto('/components', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByTestId('search-input')).toBeVisible();
-    await page.getByTestId('search-input').fill('electronics');
-    await page.getByTestId('search-btn').click();
+    const browseSearch = page.getByTestId('browse-components-page').getByTestId('search-input');
+    await expect(browseSearch).toBeVisible();
+    await browseSearch.fill('electronics');
+    await page.getByTestId('browse-components-page').getByTestId('search-btn').click();
     await expect(page).toHaveURL(/\/search\?q=electronics/);
   });
 
@@ -67,8 +68,9 @@ test.describe('Search & Browse Features', () => {
   test('category page has filter controls', async ({ page }) => {
     await page.goto('/category/armored-systems', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('category-page')).toBeVisible();
-    // Filters section
-    await expect(page.getByTestId('filters-section')).toBeVisible();
+    // Filters sidebar
+    await expect(page.getByTestId('filters-sidebar')).toBeVisible();
+    await expect(page.getByTestId('clear-filters-btn')).toBeVisible();
   });
 
   test('category page shows products list', async ({ page }) => {
