@@ -1,0 +1,73 @@
+{
+  "summary": "Update mode regression run for Defense Connect enhanced marketplace. Fixed 3 failing Playwright specs caused by UI changes (search suggestion testids, conditional clear-filters button, technical specs tab). Added 12 new frontend tests for enhanced features. Added 10 new backend tests for new API endpoints.",
+  "mode": "update",
+  "baseline_commit": "3c8e76a5bd398f20b91b76418840fcd0ab1104f4",
+  "head_commit": "dce1f50821ba3de73acd0b47fc089f0c3b04f76e",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "regression_results": {
+    "total_specs": 49,
+    "passed": 49,
+    "failed": 0,
+    "skipped": 0,
+    "backend_tests": {
+      "total": 39,
+      "passed": 39,
+      "failed": 0
+    }
+  },
+  "specs_created": [],
+  "specs_updated": [
+    "/app/tests/e2e/main-feature.spec.ts",
+    "/app/tests/e2e/secondary-features.spec.ts",
+    "/app/tests/e2e/golden-path.spec.ts"
+  ],
+  "quarantined_tests": [],
+  "test_report_links": [
+    "/app/backend/tests/test_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "updated_files": [
+    "/app/tests/e2e/main-feature.spec.ts",
+    "/app/tests/e2e/secondary-features.spec.ts",
+    "/app/tests/e2e/golden-path.spec.ts",
+    "/app/backend/tests/test_api.py"
+  ],
+  "changes_fixed": [
+    "Search suggestion testids changed from 'suggestion-0' to 'suggestion-product-0/supplier-0/category-0' (categorized dropdown). Updated main-feature.spec.ts and golden-path.spec.ts.",
+    "clear-filters-btn is conditional (only renders when activeFilterCount > 0). Updated test to apply a filter first before checking for button.",
+    "TECHNICAL SPECIFICATIONS heading is now inside the 'Technical Specs' tab (not default Overview tab). Updated test to click tab first."
+  ],
+  "new_tests_added": [
+    "Product page tabs: Overview, Technical Specs, Applications",
+    "Product page Applications tab content",
+    "Product page Supplier Snapshot section",
+    "Supplier page trust indicators (years experience, active products)",
+    "Supplier page profile completeness meter",
+    "Search empty state 'No Direct Match Found' with expert CTA",
+    "Category page enhanced filters (subcategory, availability, rating)",
+    "Category page filter apply and clear flow",
+    "Category page sort control",
+    "/api/filter-options endpoint (countries, certifications)",
+    "/api/products/{slug}/related endpoint",
+    "Enhanced supplier fields (years_in_operation, supplier_type, profile_completeness)",
+    "Enhanced product fields (lead_time, application_areas, subcategory)",
+    "Search suggestions categorized types validation"
+  ],
+  "success_rate": {
+    "backend": "100% (39/39)",
+    "frontend": "100% (49/49 across all spec files)"
+  },
+  "seed_data_creation": "No seed data created. Tests use existing DB records.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 4 spec files (core-flows, main-feature, secondary-features, golden-path) fully updated and passing. Backend tests now cover filter-options and related-products endpoints. Search suggestions dropdown is categorized into Products/Suppliers/Categories sections with testids: suggestion-product-N, suggestion-supplier-N, suggestion-category-N. Technical Specs content is in a tab (click role='tab' name='Technical Specs' first). clear-filters-btn on category page only appears when a filter is active. Profile completeness meter is on supplier page. New /api/filter-options and /api/products/{slug}/related endpoints are functional."
+}
