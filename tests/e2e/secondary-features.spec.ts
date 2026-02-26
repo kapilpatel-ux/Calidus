@@ -33,14 +33,14 @@ test.describe('Product & Supplier Detail Pages', () => {
     await page.getByTestId('contact-supplier-btn').click({ force: true });
     // Dialog should open
     await expect(page.getByRole('dialog')).toBeVisible();
-    await expect(page.getByText('Contact Supplier')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Contact Supplier' })).toBeVisible();
   });
 
   test('product page specifications section visible', async ({ page }) => {
     await page.goto('/product/rocket-launcher-m270-mlrs', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('product-page')).toBeVisible();
-    // Should show specifications
-    await expect(page.getByTestId('product-specs')).toBeVisible();
+    // Should show TECHNICAL SPECIFICATIONS heading
+    await expect(page.getByRole('heading', { name: 'TECHNICAL SPECIFICATIONS' })).toBeVisible();
   });
 
   test('supplier page loads with info', async ({ page }) => {
@@ -60,7 +60,7 @@ test.describe('Product & Supplier Detail Pages', () => {
     await page.goto('/supplier/sentinel-defense-systems', { waitUntil: 'domcontentloaded' });
     await page.getByTestId('contact-supplier-btn').click({ force: true });
     await expect(page.getByRole('dialog')).toBeVisible();
-    await expect(page.getByText(/Contact.*Sentinel/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Contact Sentinel/i })).toBeVisible();
   });
 
   test('suppliers listing page shows supplier cards', async ({ page }) => {
