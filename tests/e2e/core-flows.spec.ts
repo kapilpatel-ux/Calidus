@@ -45,29 +45,29 @@ test.describe('Homepage & Navigation', () => {
   });
 
   test('navigation links work - Components', async ({ page }) => {
-    await page.getByRole('link', { name: 'Components' }).click();
+    await page.getByTestId('nav-link-components').click();
     await expect(page).toHaveURL(/\/components/);
     await expect(page.getByTestId('browse-components-page')).toBeVisible();
   });
 
   test('navigation links work - Suppliers', async ({ page }) => {
-    await page.getByRole('link', { name: 'Suppliers' }).click();
+    await page.getByTestId('nav-link-suppliers').click();
     await expect(page).toHaveURL(/\/suppliers/);
   });
 
   test('navigation links work - How It Works', async ({ page }) => {
-    await page.getByRole('link', { name: 'How It Works' }).click();
+    await page.getByTestId('nav-link-how-it-works').click();
     await expect(page).toHaveURL(/\/how-it-works/);
   });
 
   test('navigation links work - Contact Us', async ({ page }) => {
-    await page.getByRole('link', { name: 'Contact Us' }).click();
+    await page.getByTestId('nav-link-contact-us').click();
     await expect(page).toHaveURL(/\/contact/);
     await expect(page.getByTestId('contact-page')).toBeVisible();
   });
 
   test('navigation links work - About Us', async ({ page }) => {
-    await page.getByRole('link', { name: 'About Us' }).click();
+    await page.getByTestId('nav-link-about-us').click();
     await expect(page).toHaveURL(/\/about/);
   });
 
