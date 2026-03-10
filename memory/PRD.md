@@ -43,6 +43,18 @@ Defense Connect is a defense industry B2B marketplace connecting verified suppli
 - Related products section
 - Tabbed product information
 
+### Phase 3 - UI Enhancements (Mar 2026)
+- Floating AI Search Button: Global sticky button (bottom-right) accessible on all pages
+  - Opens AI-powered search panel with quick search tags
+  - Shows categorized suggestions (Products, Suppliers, Categories)
+  - Smooth animations and keyboard shortcuts (ESC to close)
+- Product Listing Form: Multi-step form for suppliers to submit products
+  - Step 1: Basic Info (name, category, subcategory, descriptions)
+  - Step 2: Technical Specifications (custom specs, dimensions, weight, certifications)
+  - Step 3: Pricing & Delivery (price range, currency, lead time, delivery type, image URL)
+  - Step 4: Review & Submit
+  - Backend API: POST /api/product-submission, GET /api/product-submissions
+
 ## Prioritized Backlog
 ### P0 (Critical)
 - [ ] Admin dashboard for supplier verification
