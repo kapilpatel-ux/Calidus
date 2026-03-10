@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { dismissToasts, removeEmergentBadge } from '../fixtures/helpers';
 
-const BASE = 'https://trusted-supply-chain.preview.emergentagent.com';
+const BASE = 'https://connect-preview-4.preview.emergentagent.com';
 
 test.describe('Homepage & Navigation', () => {
   test.beforeEach(async ({ page }) => {

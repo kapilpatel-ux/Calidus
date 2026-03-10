@@ -14,6 +14,7 @@ import { HowItWorksPage } from "./pages/HowItWorksPage";
 import { AboutPage } from "./pages/AboutPage";
 import { ContactPage } from "./pages/ContactPage";
 import { SupplierRegistrationPage } from "./pages/SupplierRegistrationPage";
+import { ProductListingPage } from "./pages/ProductListingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { SearchResultsPage } from "./pages/SearchResultsPage";
@@ -21,6 +22,7 @@ import { SearchResultsPage } from "./pages/SearchResultsPage";
 // Components
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
+import { StickyAISearch } from "./components/StickyAISearch";
 import { Toaster } from "./components/ui/sonner";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -96,12 +98,14 @@ function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/supplier-registration" element={<SupplierRegistrationPage />} />
+              <Route path="/list-product" element={<ProductListingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/search" element={<SearchResultsPage />} />
             </Routes>
           </main>
           <Footer />
+          <StickyAISearch />
           <Toaster position="top-right" />
         </BrowserRouter>
       </div>

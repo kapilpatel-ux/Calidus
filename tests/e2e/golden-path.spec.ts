@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { dismissToasts, removeEmergentBadge } from '../fixtures/helpers';
 
-const BASE = 'https://trusted-supply-chain.preview.emergentagent.com';
+const BASE = 'https://connect-preview-4.preview.emergentagent.com';
 
 function uniqueEmail() {
   return `buyer_${Date.now()}@testdefense.com`;
@@ -55,8 +55,8 @@ test.describe('Golden Path - Defense Connect End-to-End Journey', () => {
     await navSearch.fill('armor');
     
     // 2. Suggestions appear (categorized by product/supplier/category)
-    await expect(page.getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
-    const firstSuggestion = page.locator('[data-testid^="suggestion-"]').first();
+    await expect(page.getByTestId('navbar').getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
+    const firstSuggestion = page.getByTestId('navbar').locator('[data-testid^="suggestion-"]').first();
     await expect(firstSuggestion).toBeVisible();
 
     // 3. Submit search
@@ -108,7 +108,7 @@ test.describe('Golden Path - Defense Connect End-to-End Journey', () => {
     await expect(page.getByTestId('logout-btn')).toBeVisible({ timeout: 5000 });
   });
 
-  test('supplier registration flow - full 3-step process', async ({ page }) => {
+  test('supplier registration flow - full 4-step process', async ({ page }) => {
     const email = `supplier_${Date.now()}@testdefense.com`;
 
     await page.goto('/supplier-registration', { waitUntil: 'domcontentloaded' });
@@ -124,14 +124,21 @@ test.describe('Golden Path - Defense Connect End-to-End Journey', () => {
     await page.getByTestId('license-number').fill('LIC-GOLDEN-001');
     await page.getByTestId('next-btn').click({ force: true });
 
-    // Step 2: Documents
-    await expect(page.getByTestId('step-2')).toBeVisible();
-    // Click a certification option
-    await page.getByTestId('cert-iso-9001').click({ force: true });
+    // Step 2: Address - fill required address fields
+    await expect(page.getByTestId('step-2')).toBeVisible({ timeout: 10000 });
+    await page.locator('input[placeholder="Street address, P.O. box"]').fill('123 Defense Street');
+    await page.locator('input[placeholder="City, State"]').fill('Abu Dhabi');
+    await page.locator('[data-testid="step-2"]').getByRole('combobox').click();
+    await page.getByRole('option', { name: 'UAE' }).click();
     await page.getByTestId('next-btn').click({ force: true });
 
-    // Step 3: Review
-    await expect(page.getByTestId('step-3')).toBeVisible();
+    // Step 3: Documents/Certifications
+    await expect(page.getByTestId('step-3')).toBeVisible({ timeout: 10000 });
+    // Step 3 has optional fields, we can just proceed
+    await page.getByTestId('next-btn').click({ force: true });
+
+    // Step 4: Review
+    await expect(page.getByTestId('step-4')).toBeVisible({ timeout: 10000 });
     // Verify company name shows in review
     await expect(page.locator('text=TEST Armored Solutions Inc')).toBeVisible();
 

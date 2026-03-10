@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { dismissToasts, removeEmergentBadge } from '../fixtures/helpers';
 
-const BASE = 'https://trusted-supply-chain.preview.emergentagent.com';
+const BASE = 'https://connect-preview-4.preview.emergentagent.com';
 
 // Helper to generate unique email
 function uniqueEmail() {
@@ -116,10 +116,10 @@ test.describe('Enhanced Search & Category Features', () => {
     const navSearch = page.getByTestId('navbar').getByTestId('search-input');
     // Search for something very unlikely to match
     await navSearch.fill('xyzquantumdefense9999abcnomatch');
-    await expect(page.getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('body')).toContainText(/No Direct Match Found/i);
+    await expect(page.getByTestId('navbar').getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('navbar').getByTestId('search-suggestions')).toContainText(/No Direct Match Found/i);
     // Expert CTA link
-    await expect(page.getByText(/Speak to Our Experts/i)).toBeVisible();
+    await expect(page.getByTestId('navbar').getByText(/Speak to Our Experts/i)).toBeVisible();
   });
 
   test('category page enhanced filters: subcategory and availability', async ({ page }) => {
@@ -241,9 +241,12 @@ test.describe('Supplier Registration Multi-Step Form', () => {
     await page.getByTestId('email').fill(uniqueEmail());
     await page.getByTestId('phone').fill('+971501234567');
     await page.getByTestId('license-number').fill('LIC-TEST-002');
+    
+    // Wait for form to be ready before clicking next
+    await expect(page.getByTestId('license-number')).toHaveValue('LIC-TEST-002');
     await page.getByTestId('next-btn').click({ force: true });
 
-    await expect(page.getByTestId('step-2')).toBeVisible();
+    await expect(page.getByTestId('step-2')).toBeVisible({ timeout: 10000 });
     await page.getByTestId('back-btn').click({ force: true });
     await expect(page.getByTestId('step-1')).toBeVisible();
   });

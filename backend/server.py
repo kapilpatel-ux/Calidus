@@ -162,6 +162,15 @@ class SupplierRegistration(BaseModel):
     phone: str
     license_number: str
     vat_number: Optional[str] = None
+    linkedin_profile: Optional[str] = None
+    currency: str = "USD"
+    # Address fields
+    address_line_1: Optional[str] = None
+    address_line_2: Optional[str] = None
+    zip_code: Optional[str] = None
+    city_state: Optional[str] = None
+    country: Optional[str] = None
+    # Documents
     trade_license_url: Optional[str] = None
     trade_license_expiry: Optional[str] = None
     vat_certificate_url: Optional[str] = None
@@ -178,6 +187,13 @@ class SupplierRegistrationCreate(BaseModel):
     phone: str
     license_number: str
     vat_number: Optional[str] = None
+    linkedin_profile: Optional[str] = None
+    currency: str = "USD"
+    address_line_1: Optional[str] = None
+    address_line_2: Optional[str] = None
+    zip_code: Optional[str] = None
+    city_state: Optional[str] = None
+    country: Optional[str] = None
     trade_license_url: Optional[str] = None
     trade_license_expiry: Optional[str] = None
     vat_certificate_url: Optional[str] = None
@@ -207,6 +223,48 @@ class InquiryCreate(BaseModel):
     full_name: str
     email: EmailStr
     company_name: Optional[str] = None
+
+class ProductSubmission(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    category_id: str
+    category_name: str
+    short_description: str
+    description: str
+    image_url: Optional[str] = None
+    price_range: Optional[str] = None
+    currency: str = "USD"
+    specifications: dict = {}
+    certifications: List[str] = []
+    dimensions: Optional[str] = None
+    weight: Optional[str] = None
+    operating_temp: Optional[str] = None
+    lead_time: Optional[str] = None
+    delivery_type: str = "In Stock"
+    subcategory: Optional[str] = None
+    supplier_id: str
+    supplier_name: str
+    status: str = "pending"  # pending, approved, rejected
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ProductSubmissionCreate(BaseModel):
+    name: str
+    category_id: str
+    category_name: str
+    short_description: str
+    description: str
+    image_url: Optional[str] = None
+    price_range: Optional[str] = None
+    currency: str = "USD"
+    specifications: dict = {}
+    certifications: List[str] = []
+    dimensions: Optional[str] = None
+    weight: Optional[str] = None
+    operating_temp: Optional[str] = None
+    lead_time: Optional[str] = None
+    delivery_type: str = "In Stock"
+    subcategory: Optional[str] = None
 
 # ===================== AUTH HELPERS =====================
 
@@ -603,6 +661,48 @@ async def register_supplier(registration: SupplierRegistrationCreate):
     doc['created_at'] = doc['created_at'].isoformat()
     await db.supplier_registrations.insert_one(doc)
     return reg_doc
+
+# ===================== PRODUCT SUBMISSION =====================
+
+@api_router.post("/product-submission", response_model=ProductSubmission)
+async def submit_product(submission: ProductSubmissionCreate, authorization: Optional[str] = None):
+    """Submit a new product for review (supplier dashboard feature)"""
+    # For MVP, we'll accept submissions without full auth for demo purposes
+    # In production, this would require a verified supplier token
+    
+    # Get supplier info if available from headers
+    supplier_id = "pending-supplier"
+    supplier_name = "Pending Verification"
+    
+    if authorization:
+        try:
+            token = authorization.replace("Bearer ", "")
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            user = await db.users.find_one({"id": payload["user_id"]}, {"_id": 0})
+            if user:
+                supplier_id = user["id"]
+                supplier_name = user.get("company_name", user.get("full_name", "Unknown"))
+        except:
+            pass
+    
+    product_doc = ProductSubmission(
+        **submission.model_dump(),
+        supplier_id=supplier_id,
+        supplier_name=supplier_name
+    )
+    doc = product_doc.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.product_submissions.insert_one(doc)
+    return product_doc
+
+@api_router.get("/product-submissions")
+async def get_product_submissions(status: Optional[str] = None):
+    """Get all product submissions (for admin review)"""
+    query = {}
+    if status:
+        query["status"] = status
+    submissions = await db.product_submissions.find(query, {"_id": 0}).to_list(100)
+    return submissions
 
 # ===================== STATS =====================
 

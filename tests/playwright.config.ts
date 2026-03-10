@@ -11,7 +11,7 @@ export default defineConfig({
     ['json', { outputFile: './test-results/results.json' }],
   ],
   use: {
-    baseURL: 'https://trusted-supply-chain.preview.emergentagent.com',
+    baseURL: 'https://connect-preview-4.preview.emergentagent.com',
     screenshot: 'on',
     trace: 'on-first-retry',
     headless: true,

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, ArrowRight, Shield, BarChart3, MessageSquare, ChevronRight, Star, CheckCircle } from "lucide-react";
+import { Search, ArrowRight, Shield, BarChart3, MessageSquare, ChevronRight, Star, CheckCircle, TrendingUp, Zap } from "lucide-react";
 import axios from "axios";
 import { API } from "../App";
 
@@ -10,6 +10,15 @@ export const HomePage = () => {
   const [featuredProduct, setFeaturedProduct] = useState(null);
   const [stats, setStats] = useState({ categories: 40, components: 400, suppliers: 50 });
   const [searchQuery, setSearchQuery] = useState("");
+
+  const quickSearchTags = [
+    "UAV Propulsion Systems",
+    "Ballistic Armor Plates",
+    "Radar Electronics",
+    "Tactical Communication Systems",
+    "Thermal Imaging",
+    "Encrypted Radios"
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +47,10 @@ export const HomePage = () => {
     if (searchQuery.trim()) {
       window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
     }
+  };
+
+  const handleTagClick = (tag) => {
+    window.location.href = `/search?q=${encodeURIComponent(tag)}`;
   };
 
   return (
@@ -69,27 +82,47 @@ export const HomePage = () => {
               A centralized marketplace connecting verified suppliers with defense buyers through structured transparency and intelligent discovery.
             </p>
 
-            {/* Search Bar */}
-            <form onSubmit={handleSearch} className="mb-8 animate-fade-in-up stagger-2">
-              <div className="relative max-w-xl">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search defense components, certifications, suppliers..."
-                  className="w-full pl-12 pr-32 py-4 bg-[#0F1115]/90 border border-[#272A30] rounded-sm text-white placeholder-gray-500 focus:border-[#00CED1] focus:outline-none"
-                  data-testid="hero-search-input"
-                />
-                <button 
-                  type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 btn-primary py-2 px-4 text-sm"
-                  data-testid="hero-search-btn"
-                >
-                  Search
-                </button>
+            {/* Main AI Search Bar */}
+            <div className="mb-6 animate-fade-in-up stagger-2">
+              <form onSubmit={handleSearch}>
+                <div className="relative max-w-2xl">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                    <Search className="w-5 h-5 text-[#00CED1]" />
+                    <Zap className="w-4 h-4 text-[#00CED1] animate-pulse" />
+                  </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search for defense components, suppliers, or certifications..."
+                    className="w-full pl-16 pr-32 py-5 bg-[#0F1115]/95 border border-[#272A30] rounded-sm text-white text-lg placeholder-gray-500 focus:border-[#00CED1] focus:outline-none transition-all duration-300 focus:shadow-[0_0_30px_rgba(0,206,209,0.2)]"
+                    data-testid="hero-search-input"
+                  />
+                  <button 
+                    type="submit"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 btn-primary py-3 px-6"
+                    data-testid="hero-search-btn"
+                  >
+                    Search
+                  </button>
+                </div>
+              </form>
+              
+              {/* Quick Search Tags */}
+              <div className="mt-4 flex flex-wrap gap-2" data-testid="quick-search-tags">
+                <span className="text-gray-500 text-sm mr-2">Quick search:</span>
+                {quickSearchTags.map((tag, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleTagClick(tag)}
+                    className="text-sm px-3 py-1.5 bg-[#1A1D24]/80 border border-[#272A30] rounded-sm text-gray-300 hover:text-[#00CED1] hover:border-[#00CED1]/50 transition-all duration-200"
+                    data-testid={`quick-tag-${idx}`}
+                  >
+                    {tag}
+                  </button>
+                ))}
               </div>
-            </form>
+            </div>
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-4 animate-fade-in-up stagger-3">
@@ -274,7 +307,7 @@ export const HomePage = () => {
                   className="btn-secondary w-full text-center text-sm py-2"
                   data-testid={`contact-supplier-${idx}`}
                 >
-                  CONTACT SUPPLIER
+                  VIEW PROFILE
                 </Link>
               </div>
             ))}

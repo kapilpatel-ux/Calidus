@@ -400,3 +400,109 @@ class TestEnhancedProductFields:
         valid_types = {"product", "supplier", "category"}
         for t in types:
             assert t in valid_types
+
+
+class TestProductSubmission:
+    def test_submit_product_basic(self, api_client):
+        """Test submitting a new product without authentication"""
+        categories = api_client.get(f"{BASE_URL}/api/categories").json()
+        category = categories[0]
+        
+        payload = {
+            "name": f"TEST_Product_{uuid.uuid4().hex[:8]}",
+            "category_id": category["id"],
+            "category_name": category["name"],
+            "short_description": "TEST Short description for testing",
+            "description": "TEST Full description for the product being tested in regression suite"
+        }
+        r = api_client.post(f"{BASE_URL}/api/product-submission", json=payload)
+        assert r.status_code == 200
+        data = r.json()
+        assert "id" in data
+        assert data["name"] == payload["name"]
+        assert data["status"] == "pending"
+        assert data["supplier_id"] == "pending-supplier"
+        assert data["supplier_name"] == "Pending Verification"
+
+    def test_submit_product_with_full_details(self, api_client):
+        """Test submitting a product with all optional fields"""
+        categories = api_client.get(f"{BASE_URL}/api/categories").json()
+        category = categories[0]
+        
+        payload = {
+            "name": f"TEST_FullProduct_{uuid.uuid4().hex[:8]}",
+            "category_id": category["id"],
+            "category_name": category["name"],
+            "short_description": "TEST Full product short description",
+            "description": "TEST Complete product description with all fields",
+            "image_url": "https://example.com/product.jpg",
+            "price_range": "$10,000 - $50,000",
+            "currency": "USD",
+            "specifications": {"Range": "100km", "Weight": "50kg"},
+            "certifications": ["ISO 9001:2015", "NATO STANAG"],
+            "dimensions": "100cm x 50cm x 30cm",
+            "weight": "50 kg",
+            "operating_temp": "-40°C to +55°C",
+            "lead_time": "4-6 weeks",
+            "delivery_type": "Made to Order",
+            "subcategory": category.get("subcategories", ["General"])[0] if category.get("subcategories") else "General"
+        }
+        r = api_client.post(f"{BASE_URL}/api/product-submission", json=payload)
+        assert r.status_code == 200
+        data = r.json()
+        assert data["price_range"] == payload["price_range"]
+        assert data["currency"] == "USD"
+        assert "Range" in data["specifications"]
+        assert "ISO 9001:2015" in data["certifications"]
+        assert data["delivery_type"] == "Made to Order"
+
+    def test_submit_product_missing_required_fields(self, api_client):
+        """Test that required fields are validated"""
+        payload = {
+            "name": "Test Product"
+            # Missing required fields: category_id, category_name, short_description, description
+        }
+        r = api_client.post(f"{BASE_URL}/api/product-submission", json=payload)
+        assert r.status_code == 422  # Validation error
+
+    def test_get_product_submissions(self, api_client):
+        """Test retrieving product submissions"""
+        r = api_client.get(f"{BASE_URL}/api/product-submissions")
+        assert r.status_code == 200
+        data = r.json()
+        assert isinstance(data, list)
+
+    def test_get_product_submissions_by_status(self, api_client):
+        """Test filtering submissions by status"""
+        r = api_client.get(f"{BASE_URL}/api/product-submissions?status=pending")
+        assert r.status_code == 200
+        data = r.json()
+        assert isinstance(data, list)
+        for submission in data:
+            assert submission["status"] == "pending"
+
+    def test_submit_product_response_fields(self, api_client):
+        """Verify all expected fields are present in submission response"""
+        categories = api_client.get(f"{BASE_URL}/api/categories").json()
+        category = categories[0]
+        
+        payload = {
+            "name": f"TEST_FieldsProduct_{uuid.uuid4().hex[:8]}",
+            "category_id": category["id"],
+            "category_name": category["name"],
+            "short_description": "TEST Product for field verification",
+            "description": "TEST Description for checking response fields"
+        }
+        r = api_client.post(f"{BASE_URL}/api/product-submission", json=payload)
+        assert r.status_code == 200
+        data = r.json()
+        
+        # Verify all expected fields
+        expected_fields = [
+            "id", "name", "category_id", "category_name", "short_description",
+            "description", "image_url", "price_range", "currency", "specifications",
+            "certifications", "dimensions", "weight", "operating_temp", "lead_time",
+            "delivery_type", "subcategory", "supplier_id", "supplier_name", "status", "created_at"
+        ]
+        for field in expected_fields:
+            assert field in data, f"Missing field: {field}"

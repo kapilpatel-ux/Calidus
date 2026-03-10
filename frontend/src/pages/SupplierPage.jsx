@@ -447,6 +447,96 @@ export const SupplierPage = () => {
           </div>
         </section>
       )}
+
+      {/* Ratings & Reviews */}
+      <section className="py-16 bg-[#050505]">
+        <div className="container-custom">
+          <h2 className="text-2xl font-bold text-white mb-8" style={{ fontFamily: 'Barlow Condensed' }}>
+            RATINGS & REVIEWS
+          </h2>
+          
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Rating Summary */}
+            <div className="bg-[#0F1115] border border-[#272A30] rounded-sm p-6">
+              <div className="text-center mb-6">
+                <p className="text-5xl font-bold text-[#00CED1]" style={{ fontFamily: 'Barlow Condensed' }}>{supplier.rating}</p>
+                <div className="flex justify-center gap-1 my-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-5 h-5 ${i < Math.floor(supplier.rating) ? 'text-yellow-500 fill-yellow-500' : 'text-gray-600'}`} />
+                  ))}
+                </div>
+                <p className="text-gray-500 text-sm">Based on {supplier.review_count} reviews</p>
+              </div>
+              
+              {/* Rating Breakdown */}
+              <div className="space-y-3">
+                {[5, 4, 3, 2, 1].map(rating => {
+                  const percentage = rating === 5 ? 72 : rating === 4 ? 18 : rating === 3 ? 7 : rating === 2 ? 2 : 1;
+                  return (
+                    <div key={rating} className="flex items-center gap-3">
+                      <span className="text-gray-500 text-sm w-8">{rating}★</span>
+                      <div className="flex-1 h-2 bg-[#272A30] rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-yellow-500 rounded-full"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                      <span className="text-gray-500 text-sm w-10">{percentage}%</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Sample Reviews */}
+            <div className="lg:col-span-2 space-y-4">
+              {[
+                {
+                  name: "Defense Procurement Officer",
+                  company: "Ministry of Defense",
+                  rating: 5,
+                  date: "2 weeks ago",
+                  comment: "Excellent quality and timely delivery. The technical specifications matched exactly what was promised. Would highly recommend for defense procurement."
+                },
+                {
+                  name: "Systems Integration Lead",
+                  company: "Aerospace Corp",
+                  rating: 4,
+                  date: "1 month ago",
+                  comment: "Good product quality and responsive support team. Documentation was comprehensive. Minor delays in shipping but overall satisfied with the partnership."
+                },
+                {
+                  name: "Quality Assurance Manager",
+                  company: "Defense Systems Inc",
+                  rating: 5,
+                  date: "2 months ago",
+                  comment: "Outstanding compliance with military specifications. All certifications were verified and accurate. Professional communication throughout the process."
+                }
+              ].map((review, idx) => (
+                <div key={idx} className="bg-[#0F1115] border border-[#272A30] rounded-sm p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <p className="text-white font-medium">{review.name}</p>
+                      <p className="text-gray-500 text-sm">{review.company}</p>
+                    </div>
+                    <span className="text-gray-500 text-sm">{review.date}</span>
+                  </div>
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-600'}`} />
+                    ))}
+                  </div>
+                  <p className="text-gray-400 text-sm">{review.comment}</p>
+                </div>
+              ))}
+              
+              <p className="text-center text-gray-500 text-sm pt-4">
+                Showing 3 of {supplier.review_count} reviews
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { dismissToasts, removeEmergentBadge } from '../fixtures/helpers';
 
-const BASE = 'https://trusted-supply-chain.preview.emergentagent.com';
+const BASE = 'https://connect-preview-4.preview.emergentagent.com';
 
 test.describe('Search & Browse Features', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,9 +14,10 @@ test.describe('Search & Browse Features', () => {
     const navSearch = page.getByTestId('navbar').getByTestId('search-input');
     await navSearch.fill('armor');
     // Wait for suggestions dropdown to appear (debounced + API call)
-    await expect(page.getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
+    // Use navbar-scoped selector to avoid conflict with StickyAISearch component
+    await expect(page.getByTestId('navbar').getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
     // Suggestions are now categorized: product, supplier, or category
-    const firstSuggestion = page.locator('[data-testid^="suggestion-"]').first();
+    const firstSuggestion = page.getByTestId('navbar').locator('[data-testid^="suggestion-"]').first();
     await expect(firstSuggestion).toBeVisible();
   });
 
@@ -24,13 +25,13 @@ test.describe('Search & Browse Features', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     const navSearch = page.getByTestId('navbar').getByTestId('search-input');
     await navSearch.fill('defense');
-    await expect(page.getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('navbar').getByTestId('search-suggestions')).toBeVisible({ timeout: 10000 });
     // Suggestions are grouped by type: product, supplier, category
     // Check that at least one categorized suggestion exists
-    const suggestions = page.locator('[data-testid^="suggestion-product-"], [data-testid^="suggestion-supplier-"], [data-testid^="suggestion-category-"]');
+    const suggestions = page.getByTestId('navbar').locator('[data-testid^="suggestion-product-"], [data-testid^="suggestion-supplier-"], [data-testid^="suggestion-category-"]');
     await expect(suggestions.first()).toBeVisible();
     // Dropdown shows section headers: Products, Suppliers, Categories
-    await expect(page.getByTestId('search-suggestions')).toContainText(/Products|Suppliers|Categories/i);
+    await expect(page.getByTestId('navbar').getByTestId('search-suggestions')).toContainText(/Products|Suppliers|Categories/i);
   });
 
   test('search form submits and navigates to search results', async ({ page }) => {
