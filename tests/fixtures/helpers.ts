@@ -5,7 +5,7 @@ export async function waitForAppReady(page: Page) {
 }
 
 export async function dismissToasts(page: Page) {
-  await page.addLocatorHandler(
+  await page.addLocatorHandler( 
     page.locator('[data-sonner-toast], .Toastify__toast, [role="status"].toast, .MuiSnackbar-root'),
     async () => {
       const close = page.locator('[data-sonner-toast] [data-close], [data-sonner-toast] button[aria-label="Close"], .Toastify__close-button, .MuiSnackbar-root button');
