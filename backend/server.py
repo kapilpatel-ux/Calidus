@@ -11,7 +11,11 @@ import uuid
 from datetime import datetime, timezone
 import bcrypt
 import jwt
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+try:
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+except ImportError:
+    LlmChat = None
+    UserMessage = None
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -584,6 +588,9 @@ async def search(search_query: SearchQuery):
 async def ai_search_suggestions(search_query: SearchQuery):
     """Use AI to provide intelligent search suggestions"""
     try:
+        if LlmChat is None or UserMessage is None:
+            return {"suggestions": [], "ai_summary": ""}
+
         api_key = os.environ.get('EMERGENT_LLM_KEY')
         if not api_key:
             return {"suggestions": [], "ai_summary": ""}
